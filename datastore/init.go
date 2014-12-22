@@ -2,21 +2,18 @@ package datastore
 
 import (
 	"database/sql"
-	"gihub.com/Maksadbek/go-ws-daemon/conf"
-	"github.com/garyburd/redigo"
+	"github.com/garyburd/redigo/redis"
 	_ "github.com/go-sql-driver/mysql"
-	"log"
-	"os"
 )
 
-func Initialize() {
-	//get configs
-	var config conf.App
-	config = conf.Read()
+var db *sql.DB
+var redisPool *redis.Pool
+
+func Initialize(DSN string, redisPort int) (err error) {
 	//connect to sql db
-	db, err := sql.Open("mysql", config.Mysql.DSN)
+	db, err = sqlConnect(DSN)
 	if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		return err
 	}
+	return err
 }

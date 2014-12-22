@@ -2,31 +2,30 @@ package conf
 
 import (
 	"github.com/BurntSushi/toml"
-	"log"
+	"io"
 )
 
-type mysqlTest struct {
-	DSN string
+type Datastore struct {
+	Redis struct {
+		Port int
+		Chan string
+	}
+
+	Mysql struct {
+		DSN string
+	}
 }
 
-type redisTest struct {
-	IP      string
-	Channel string
-}
-
-type webSocket struct {
-	Port string
+type Websocket struct {
+	Port int
 }
 
 type App struct {
-	Datastore map[string]mysqlTest
-	Redis     map[string]redisTest
-	WebSocket webSocket
+	DS Datastore
+	WS Websocket
 }
 
-func Read() (config App, err error) {
-	if _, err := toml.DecodeFile("../config.toml", &config); err != nil {
-		log.Fatal(err)
-	}
+func Read(r io.Reader) (config App, err error) {
+	_, err = toml.DecodeReader(r, &config)
 	return config, err
 }

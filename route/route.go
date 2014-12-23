@@ -4,21 +4,21 @@ import (
 	"fmt"
 	"github.com/Maksadbek/go-ws-daemon/conf"
 	"github.com/Maksadbek/go-ws-daemon/datastore"
-	"html/template"
+	_ "html/template"
 	"net/http"
 )
 
-var orderLimit
+var orderLimit int
 
-func Initialize(conf App) error {
-	err := datastore.Initialize(conf.DS.Mysql.DSN, conf.DS.Redis.Port)
+func Initialize(config conf.App) error {
+	err := datastore.Initialize(config.DS.Mysql.DSN, config.DS.Redis.Port)
 	if err != nil {
 		return err
 	}
-	orderLimit = conf.DS.Mysql.Limit
+	orderLimit = config.DS.Mysql.Limit
 	return err
 }
 
 func GetLastOrders(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "%+v", datastore.GetLast(lastOrder))
+	fmt.Fprintf(w, "%+v", datastore.GetLast(orderLimit))
 }

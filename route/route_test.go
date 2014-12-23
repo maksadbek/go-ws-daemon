@@ -25,7 +25,11 @@ func TestInitialize(t *testing.T) {
 
 	reader := strings.NewReader(mockConf)
 	config, err := conf.Read(reader)
+<<<<<<< HEAD
 	log.Println(config.DS.Mysql.DSN)
+=======
+	log.Println(config)
+>>>>>>> bfe3682e62f1473954d564b21829b949be5cc8dc
 	if err != nil {
 		t.Error(err)
 	}

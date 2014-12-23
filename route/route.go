@@ -20,6 +20,10 @@ func Initialize(config conf.App) error {
 }
 
 func GetLastOrders(w http.ResponseWriter, r *http.Request) {
+<<<<<<< HEAD
 	lastOrders, _ := datastore.GetLast(orderLimit)
 	fmt.Fprintf(w, "%+v", lastOrders)
+=======
+	fmt.Fprintf(w, "%+v", datastore.GetLast(orderLimit))
+>>>>>>> bfe3682e62f1473954d564b21829b949be5cc8dc
 }

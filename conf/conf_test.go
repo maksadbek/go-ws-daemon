@@ -11,6 +11,7 @@ func TestRead(t *testing.T) {
 [ds]
     [ds.mysql]
 		dsn = "root:zqwW4XYLzNwN3Dsa@tcp(54.72.185.137:3306)/test"
+		limit = 20
 	[ds.redis]
 		port = 6379
 		chan = "orders"
@@ -31,5 +32,10 @@ func TestRead(t *testing.T) {
 	want = 1234
 	if got := app.WS.Port; got != want {
 		t.Errorf("Websocket Port %d, want %d", got, want)
+	}
+
+	want = 20
+	if got := app.DS.Mysql.Limit; got != want {
+		t.Errorf("Mysql limit %d, want %d", got, want)
 	}
 }

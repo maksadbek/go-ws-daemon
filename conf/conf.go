@@ -12,7 +12,8 @@ type Datastore struct {
 	}
 
 	Mysql struct {
-		DSN string
+		DSN   string
+		Limit int
 	}
 }
 

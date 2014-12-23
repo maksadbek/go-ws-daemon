@@ -10,7 +10,7 @@ func TestRead(t *testing.T) {
 	mockConf := `
 [ds]
     [ds.mysql]
-		dsn = "root:toor@tcp(11.22.33.44:3306)/test"
+		dsn = "root:zqwW4XYLzNwN3Dsa@tcp(54.72.185.137:3306)/test"
 	[ds.redis]
 		port = 6379
 		chan = "orders"

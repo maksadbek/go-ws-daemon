@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Maksadbek/go-ws-daemon/conf"
 	"github.com/Maksadbek/go-ws-daemon/route"
 	"io/ioutil"
@@ -10,7 +9,7 @@ import (
 )
 
 func main() {
-	d, err = ioutil.ReadFile("config.toml")
+	d, err := ioutil.ReadFile("config.toml")
 	if err != nil {
 		log.Fatal(err)
 	}

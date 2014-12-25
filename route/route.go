@@ -17,11 +17,10 @@ func Initialize(config conf.App) error {
 	}
 	orderLimit = config.DS.Mysql.Limit
 	orders, _ := datastore.GetLast(orderLimit)
-	fmt.Printf("%+v\n", orders)
 	return err
 }
 
 func GetLastOrders(w http.ResponseWriter, r *http.Request) {
 	lastOrders, _ := datastore.GetLast(orderLimit)
-	fmt.Fprintf(w, "%+v", lastOrders)
+	fmt.Fprintf(w, "heelo")
 }

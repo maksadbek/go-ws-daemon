@@ -10,9 +10,6 @@ import (
 	"strings"
 )
 
-func getLastOrders(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hello")
-}
 func main() {
 	d, err := ioutil.ReadFile("config.toml")
 	if err != nil {
@@ -28,7 +25,6 @@ func main() {
 	}
 
 	r.Initialize(config)
-	r.Print("HELLO")
 	http.Handle("/assets", http.StripPrefix("/assets/", http.FileServer(http.Dir("/assets/"))))
 	http.HandleFunc("/", r.GetLastOrders)
 	http.ListenAndServe(":3000", nil)

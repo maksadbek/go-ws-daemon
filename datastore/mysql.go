@@ -2,20 +2,19 @@ package datastore
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	_ "time"
+	"github.com/go-sql-driver/mysql"
 )
 
 type orderLog struct {
 	ID            int
 	OrderID       int
 	DriverConnID  int
-	InsertDate    []byte
-	ClickTime     []byte
+	InsertDate    mysql.NullTime
+	ClickTime     mysql.NullTime
 	Status        int
 	TaxiFleetID   int
 	UnitID        int
-	DrvAcceptTime []byte
+	DrvAcceptTime mysql.NullTime
 	Active        int
 }
 

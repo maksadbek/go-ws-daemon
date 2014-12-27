@@ -27,6 +27,5 @@ func GetLastOrders(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 	fmt.Printf("%+v", orders)
-	fmt.Fprintf(w, "%+v", orders)
-	//	t.ExecuteTemplate(w, "orders", orders)
+	t.ExecuteTemplate(w, "orders", orders)
 }

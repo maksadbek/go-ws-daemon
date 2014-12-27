@@ -1,3 +1,27 @@
 {{ define "orders" }}
 <h1>Orders</h1>
+{{ range $value := . }}
+<div>
+    <ul>
+        <li>{{ $value.ID }}</li>
+        <li>{{ $value.OrderID }}</li>
+        <li>{{ $value.DriverConnID }}</li>
+        <li>{{ $value.Status }}</li>
+        <li>{{ $value.TaxiFleetID }}</li>
+        <li>{{ $value.Status }}</li>
+        <li>{{ $value.UnitID }}</li>
+        <li>{{ $value.Active }}</li>
+        {{ if $value.InsertDate.Valid }}
+            <li>{{ $value.InsertDate.Time.Format "2006 Jan 2 at 15:04"}}</li>
+        {{ end }}
+        {{ if $value.ClickTime.Valid }}
+            <li>{{ $value.ClickTime.Time.Format "2006 Jan 2 at 15:04"}}</li>
+        {{ end }}
+        {{ if $value.DrvAcceptTime.Valid }}
+            <li>{{ $value.DrvAcceptTime.Time.Format "2006 Jan 2 at 15:04" }}</li>
+        {{ end }}
+
+    </ul>
+<div>
+{{ end }}
 {{ end }}

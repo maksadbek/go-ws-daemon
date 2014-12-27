@@ -6,8 +6,8 @@ import (
 )
 
 type orderLog struct {
-	id      int
-	orderID int
+	Id      int
+	OrderID int
 }
 
 type Fleet []orderLog
@@ -27,7 +27,7 @@ func GetLast(last int) (Fleet, error) {
 	defer rows.Close()
 	var n = 0
 	for rows.Next() {
-		if err := rows.Scan(&fleet[n].id, &fleet[n].orderID); err != nil {
+		if err := rows.Scan(&fleet[n].Id, &fleet[n].OrderID); err != nil {
 			return fleet, err
 		}
 		n += 1

@@ -11,7 +11,7 @@ func TestInitialize(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	want := 20
+	want := 5
 	row, err := GetLast(want)
 	if err != nil {
 		t.Error(err)

@@ -3,18 +3,19 @@ package datastore
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	_ "time"
 )
 
 type orderLog struct {
 	ID            int
 	OrderID       int
 	DriverConnID  int
-	InsertDate    time.Time
-	ClickTime     time.Time
+	InsertDate    []byte
+	ClickTime     []byte
 	Status        int
 	TaxiFleetID   int
 	UnitID        int
-	DrvAcceptTime time.Time
+	DrvAcceptTime []byte
 	Active        int
 }
 
@@ -44,5 +45,6 @@ func GetLast(last int) (Fleet, error) {
 		}
 		n += 1
 	}
+
 	return fleet, err
 }

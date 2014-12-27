@@ -22,8 +22,11 @@ func Initialize(config conf.App, temp *template.Template) error {
 }
 
 func GetLastOrders(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("GetLastOrders")
-	orders, _ := datastore.GetLast(orderLimit)
+	orders, err := datastore.GetLast(orderLimit)
+	if err != nil {
+		fmt.Println(err)
+	}
 	fmt.Printf("%+v", orders)
-	t.ExecuteTemplate(w, "orders", orders)
+	fmt.Fprintf(w, "%+v", orders)
+	//	t.ExecuteTemplate(w, "orders", orders)
 }

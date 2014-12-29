@@ -1,0 +1,9 @@
+[ds]
+    [ds.mysql]
+		dsn = "root:zqwW4XYLzNwN3Dsa@tcp(54.72.185.137:3306)/test?parseTime=true"
+		limit = 100
+	[ds.redis]
+		port = 6379
+		chan = "orders"
+[ws]
+	port = 1234

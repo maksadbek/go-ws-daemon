@@ -26,7 +26,7 @@ func sqlConnect(DSN string) (*sql.DB, error) {
 }
 
 func GetLast(last int) (Fleet, error) {
-	rows, err := db.Query("SELECT id, order_id, conn_driver_id, date_insert, dtime_click, status, taxi_fleet_id, unit_id, drv_accepted_date_time, active from max_taxi_deamon_log LIMIT ?", last)
+	rows, err := db.Query("SELECT id, order_id, conn_driver_id, date_insert, dtime_click, status, taxi_fleet_id, unit_id, drv_accepted_date_time, active from max_taxi_deamon_log ORDER BY id DESC LIMIT 0, ?", last)
 	fleet := make(Fleet, last)
 	if err != nil {
 		return fleet, err

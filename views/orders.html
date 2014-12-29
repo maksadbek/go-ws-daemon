@@ -1,27 +1,39 @@
 {{ define "orders" }}
 <h1>Orders</h1>
+<table class="table">
+<tr>
+   <th>ID</th>
+   <th>Order ID</th>
+   <th>Driver Conn ID</th>
+   <th>Status</th>
+   <th>Taxi Fleet ID</th>
+   <th>Unit ID</th>
+   <th>Active</th>
+   <th>Insert Date</th>
+   <th>Click Time</th>
+</tr>
 {{ range $value := . }}
-<div>
-    <ul>
-        <li>{{ $value.ID }}</li>
-        <li>{{ $value.OrderID }}</li>
-        <li>{{ $value.DriverConnID }}</li>
-        <li>{{ $value.Status }}</li>
-        <li>{{ $value.TaxiFleetID }}</li>
-        <li>{{ $value.Status }}</li>
-        <li>{{ $value.UnitID }}</li>
-        <li>{{ $value.Active }}</li>
-        {{ if $value.InsertDate.Valid }}
-            <li>{{ $value.InsertDate.Time.Format "2006 Jan 2 at 15:04"}}</li>
-        {{ end }}
-        {{ if $value.ClickTime.Valid }}
-            <li>{{ $value.ClickTime.Time.Format "2006 Jan 2 at 15:04"}}</li>
-        {{ end }}
-        {{ if $value.DrvAcceptTime.Valid }}
-            <li>{{ $value.DrvAcceptTime.Time.Format "2006 Jan 2 at 15:04" }}</li>
-        {{ end }}
+        <tr>
+            <td>{{ $value.ID }}</li>
+            <td>{{ $value.OrderID }}</li>
+            <td>{{ $value.DriverConnID }}</li>
+            <td>{{ $value.Status }}</li>
+            <td>{{ $value.TaxiFleetID }}</li>
+            <td>{{ $value.UnitID }}</li>
+            <td>{{ $value.Active }}</li>
+            
+            <td>
+            {{ if $value.InsertDate.Valid }}
+                {{ $value.InsertDate.Time.Format "2 Jan 2006 at 15:04" }}
+            {{ end }}
+            </td>
 
-    </ul>
-<div>
+            <td>
+            {{ if $value.ClickTime.Valid }}
+                {{ $value.ClickTime.Time.Format "2 Jan 2006 at 15:04" }}
+            {{ end }}
+            </td>
+        </tr>
 {{ end }}
+</table>
 {{ end }}

@@ -4,9 +4,125 @@
     <head>
         <title></title>
         <link rel="stylesheet" type="text/css" href="/assets/style/bootstrap.min.css">
+        <script src="/assets/js/react.js"></script>
+        <script src="/assets/js/JSXTransformer.js"></script>
+        <script src="/assets/js/jquery.min.js"></script>
     </head>
     <body>
-        {{ template "orders" .}}
+        <div id="orders"></div>
+        <script type="text/jsx">
+
+            var OrderBox = React.createClass({
+                loadOrdersFromServer: function() {
+                    $.ajax({
+                        url: this.props.url,
+                        dataType: 'text',
+                        success: function(data) {
+                            this.setState({data: JSON.parse(data)});
+                        }.bind(this),
+                        error: function(xhr, status, err) {
+                            console.err(this.props.url, status, err.toString());
+                        }.bind(this)
+                    });
+                },
+                getInitialState: function() {
+                    return { data: [] };
+                },
+                componentDidMount: function() {
+                    this.loadOrdersFromServer();
+                    setInterval(this.loadOrdersFromServer,
+                    this.props.pollInterval)
+                },
+                render: function() {
+                    return (
+                        <div className="orderBox container">
+                            <OrderList data = {this.state.data} />
+                        </div>
+                        );
+                }
+            });
+            
+
+            var OrderList = React.createClass({
+                render: function() {
+
+                    var orderNodes = this.props.data.map(function (order) {
+                        return (
+                            <Order ID = {order.ID} 
+                                    OrderID = {order.ID}
+                                    OrderID = {order.OrderID}
+                                    DriverConnID = {order.DriverConnID}
+                                    Status = {order.Status}
+                                    TaxiFleetID = {order.TaxiFleetID}
+                                    UnitID = {order.UnitID}
+                                    Active = {order.Active}
+                                    InsertDate = {order.InsertDate.Time}
+                                    ClickTime = {order.ClickTime.Time}
+                                    >
+                            </Order>
+                        );
+                    });
+
+                    return(
+                        <table className="OrderList table table-striped">
+                            <tr>
+						        <th>ID</th>
+						        <th>Order ID</th>
+						        <th>Driver Conn ID</th>
+						        <th>Status</th>
+						        <th>Taxi Fleet ID</th>
+						        <th>Unit ID</th>
+						        <th>Active</th>
+						        <th>Insert Date</th>
+						        <th>Click Time</th>
+                            </tr>
+                            {orderNodes}
+                        </table>
+                    );
+                }
+            });
+
+
+            var Order = React.createClass({
+                render: function(){
+                    return(
+                    <tr>
+                        <td className="order-id">
+                                {this.props.ID}
+                        </td>
+                        <td className="order-id">
+                                {this.props.OrderID}
+                        </td>
+                        <td className="order-id">
+                                {this.props.DriverConnID}
+                        </td>
+                        <td className="order-id">
+                                {this.props.Status}
+                        </td>
+                        <td className="order-id">
+                                {this.props.TaxiFleetID}
+                        </td>
+                        <td className="order-id">
+                                {this.props.UnitID}
+                        </td>
+                        <td className="order-id">
+                                {this.props.Active}
+                        </td>
+                        <td className="order-id">
+                                {this.props.InsertDate}
+                        </td>
+                        <td className="order-id">
+                                {this.props.ClickTime}
+                        </td>
+                    </tr>
+                    );
+                }
+            });
+            React.render(
+                    <OrderBox url="/orders" pollInterval={2000} />, 
+                    document.getElementById('orders')
+            );
+        </script>
     </body>
 </html>
 {{ end }}

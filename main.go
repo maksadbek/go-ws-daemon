@@ -29,9 +29,9 @@ func main() {
 	}
 
 	route.Initialize(config, t)
-	//log.Fatal(http.ListenAndServe(":8080", http.FileServer(http.Dir("assets"))))
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
-	http.HandleFunc("/", route.GetLastOrders)
+	http.HandleFunc("/", route.Index)
+	http.HandleFunc("/orders", route.GetLastOrders)
 
 	log.Fatal(http.ListenAndServe(":4000", nil))
 }

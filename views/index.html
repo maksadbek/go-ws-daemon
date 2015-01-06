@@ -3,10 +3,10 @@
 <html>
     <head>
         <title></title>
-        <link rel="stylesheet" type="text/css" href="/assets/style/bootstrap.min.css">
         <script src="/assets/js/react.js"></script>
         <script src="/assets/js/JSXTransformer.js"></script>
         <script src="/assets/js/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/assets/style/bootstrap.min.css">
     </head>
     <body>
         <div id="orders"></div>
@@ -19,6 +19,7 @@
                         dataType: 'text',
                         success: function(data) {
                             this.setState({data: JSON.parse(data)});
+                            console.log(JSON.parse(data));
                         }.bind(this),
                         error: function(xhr, status, err) {
                             console.err(this.props.url, status, err.toString());
@@ -56,15 +57,15 @@
                                     TaxiFleetID = {order.TaxiFleetID}
                                     UnitID = {order.UnitID}
                                     Active = {order.Active}
-                                    InsertDate = {order.InsertDate.Time}
-                                    ClickTime = {order.ClickTime.Time}
+                                    InsertDate = {order.InsertDate}
+                                    ClickTime = {order.ClickTime}
                                     >
                             </Order>
                         );
                     });
 
                     return(
-                        <table className="OrderList table table-striped">
+                        <table className="OrderList table table-bordered">
                             <tr>
 						        <th>ID</th>
 						        <th>Order ID</th>

@@ -1,11 +1,13 @@
 package main
 
 import (
-	"github.com/Maksadbek/go-ws-daemon/conf"
-	"github.com/Maksadbek/go-ws-daemon/route"
 	"html/template"
 	"io/ioutil"
 	"log"
+
+	"github.com/Maksadbek/go-ws-daemon/conf"
+	"github.com/Maksadbek/go-ws-daemon/route"
+
 	"net/http"
 	"strings"
 )

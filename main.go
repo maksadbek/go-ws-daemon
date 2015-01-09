@@ -25,15 +25,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	t, err := template.ParseFiles("views/index.html", "views/orders.html")
+	t, err := template.ParseFiles("views/index.html")
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	route.Initialize(config, t)
 
-	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.HandleFunc("/", route.Index)
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.HandleFunc("/orders", route.GetLastOrders)
 
 	log.Fatal(http.ListenAndServe(":8888", nil))

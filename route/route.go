@@ -52,6 +52,7 @@ func GetLastOrders(w http.ResponseWriter, r *http.Request) {
 
 //Index file
 func Index(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(r.URL.RawQuery)
 	m, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		log.Println("error")
@@ -59,14 +60,16 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hash := m["hash"][0]
+	fleet := m["fleet"][0]
+
 	webSiteCookies, err := r.Cookie("PHPSESSID")
 	if err != nil {
-		log.Printf("%+v\n", err)
+		panic(err)
 	}
 
 	if hash == webSiteCookies.Value {
 		log.Println("success")
-		t.ExecuteTemplate(w, "index", nil)
+		t.ExecuteTemplate(w, "index", fleet)
 	} else {
 		log.Println("failure")
 		fmt.Fprintf(w, "login fail")

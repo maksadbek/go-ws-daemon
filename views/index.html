@@ -99,7 +99,8 @@
                 }
             });
             React.render(
-                    <OrderBox url="/orders?fleet=202" pollInterval={2000} />, 
+                    {{ $fleet := . }}
+                    <OrderBox url="/orders?fleet={{ $fleet }}" pollInterval={2000} />, 
                     document.getElementById('orders')
             );
         </script>

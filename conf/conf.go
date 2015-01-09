@@ -17,13 +17,13 @@ type Datastore struct {
 	}
 }
 
-type Websocket struct {
-	Port int
+type Server struct {
+	Port string
 }
 
 type App struct {
-	DS Datastore
-	WS Websocket
+	DS  Datastore
+	SRV Server
 }
 
 func Read(r io.Reader) (config App, err error) {

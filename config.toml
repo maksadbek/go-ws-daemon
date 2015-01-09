@@ -5,5 +5,5 @@
 	[ds.redis]
 		port = 6379
 		chan = "orders"
-[ws]
-	port = 1234
+[srv]
+	port = "8881"

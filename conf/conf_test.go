@@ -15,7 +15,7 @@ func TestRead(t *testing.T) {
 	[ds.redis]
 		port = 6379
 		chan = "orders"
-[ws]
+[srv]
 	port = 1234
 `
 
@@ -30,7 +30,7 @@ func TestRead(t *testing.T) {
 	}
 
 	want = 1234
-	if got := app.WS.Port; got != want {
+	if got := app.SRV.Port; got != want {
 		t.Errorf("Websocket Port %d, want %d", got, want)
 	}
 

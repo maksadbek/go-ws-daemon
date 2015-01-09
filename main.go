@@ -36,5 +36,5 @@ func main() {
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.HandleFunc("/orders", route.GetLastOrders)
 
-	log.Fatal(http.ListenAndServe(":8888", nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+config.SRV.Port, nil))
 }

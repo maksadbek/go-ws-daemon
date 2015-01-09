@@ -31,9 +31,10 @@ func main() {
 	}
 
 	route.Initialize(config, t)
+
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.HandleFunc("/", route.Index)
 	http.HandleFunc("/orders", route.GetLastOrders)
 
-	log.Fatal(http.ListenAndServe(":4000", nil))
+	log.Fatal(http.ListenAndServe(":8888", nil))
 }

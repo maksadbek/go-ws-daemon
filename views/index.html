@@ -19,7 +19,6 @@
                         dataType: 'text',
                         success: function(data) {
                             this.setState({data: JSON.parse(data)});
-                            console.log(JSON.parse(data));
                         }.bind(this),
                         error: function(xhr, status, err) {
                             console.err(this.props.url, status, err.toString());
@@ -49,16 +48,12 @@
 
                     var orderNodes = this.props.data.map(function (order) {
                         return (
-                            <Order ID = {order.ID} 
-                                    OrderID = {order.ID}
+                            <Order  
                                     OrderID = {order.OrderID}
-                                    DriverConnID = {order.DriverConnID}
                                     Status = {order.Status}
-                                    TaxiFleetID = {order.TaxiFleetID}
-                                    UnitID = {order.UnitID}
-                                    Active = {order.Active}
                                     InsertDate = {order.InsertDate}
-                                    ClickTime = {order.ClickTime}
+                                    CarNum = {order.CarNum}
+                                    Name = {order.Name}
                                     >
                             </Order>
                         );
@@ -67,15 +62,11 @@
                     return(
                         <table className="OrderList table table-bordered">
                             <tr>
-						        <th>ID</th>
 						        <th>Order ID</th>
-						        <th>Driver Conn ID</th>
-						        <th>Status</th>
-						        <th>Taxi Fleet ID</th>
-						        <th>Unit ID</th>
-						        <th>Active</th>
 						        <th>Insert Date</th>
-						        <th>Click Time</th>
+						        <th>Status</th>
+                                <th>Name</th>
+                                <th>Car Number</th>
                             </tr>
                             {orderNodes}
                         </table>
@@ -89,38 +80,26 @@
                     return(
                     <tr>
                         <td className="order-id">
-                                {this.props.ID}
-                        </td>
-                        <td className="order-id">
                                 {this.props.OrderID}
-                        </td>
-                        <td className="order-id">
-                                {this.props.DriverConnID}
-                        </td>
-                        <td className="order-id">
-                                {this.props.Status}
-                        </td>
-                        <td className="order-id">
-                                {this.props.TaxiFleetID}
-                        </td>
-                        <td className="order-id">
-                                {this.props.UnitID}
-                        </td>
-                        <td className="order-id">
-                                {this.props.Active}
                         </td>
                         <td className="order-id">
                                 {this.props.InsertDate}
                         </td>
                         <td className="order-id">
-                                {this.props.ClickTime}
+                                {this.props.Status}
+                        </td>
+                        <td className="order-id">
+                                {this.props.Name}
+                        </td>
+                        <td className="order-id">
+                                {this.props.CarNum}
                         </td>
                     </tr>
                     );
                 }
             });
             React.render(
-                    <OrderBox url="/orders" pollInterval={2000} />, 
+                    <OrderBox url="/orders?fleet=202" pollInterval={2000} />, 
                     document.getElementById('orders')
             );
         </script>

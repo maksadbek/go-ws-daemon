@@ -12,7 +12,7 @@ func TestInitialize(t *testing.T) {
 		t.Error(err)
 	}
 	want := 5
-	row, err := GetLast(want)
+	row, err := GetAll(Where{Field: "taxi_fleet_id", Crit: "=", Value: "202"}, want)
 	if err != nil {
 		t.Error(err)
 	}

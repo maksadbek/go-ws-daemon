@@ -2,20 +2,23 @@ package datastore
 
 import (
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
 	"strconv"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 type orderLog struct {
-	ID           int
-	OrderID      int
-	DriverConnID int
-	InsertDate   string
-	ClickTime    string
-	Status       string
-	TaxiFleetID  int
-	UnitID       int
-	Active       int
+	OrderID    int
+	InsertDate string
+	Status     string
+	Name       string
+	CarNum     string
+}
+
+type Where struct {
+	Field string
+	Crit  string
+	Value string
 }
 
 type Fleet []orderLog
@@ -69,22 +72,18 @@ func statusToDesc(status int) string {
 	return "Статус не определен: " + strconv.Itoa(status)
 }
 
-func GetLast(last int) (Fleet, error) {
+func GetAll(where Where, last int) (Fleet, error) {
 	getALLquery := ` 
 			SELECT 
-				id, 
-				order_id, 
-				conn_driver_id, 
-				date_insert, 
-				dtime_click, 
-				status, 
-				taxi_fleet_id, 
-				unit_id, 
-				active 
-				FROM max_taxi_deamon_log 
-				ORDER BY id DESC 
-				LIMIT 0, ?
-			`
+				l.order_id as order_id, 
+				l.date_insert as data_insert, 
+				l.status as status, 
+				u.number as carNum,
+				d.driver_name as driverName
+				FROM max_taxi_deamon_log l, max_drivers d, max_units u
+				WHERE u.id = d.unit_id and l.unit_id = u.id and l.` + where.Field + ` ` + where.Crit + ` ` + where.Value +
+		` ORDER BY l.id DESC 
+				LIMIT 0, ? `
 	rows, err := db.Query(getALLquery, last)
 	fleet := make(Fleet, last)
 	if err != nil {
@@ -96,29 +95,18 @@ func GetLast(last int) (Fleet, error) {
 	for rows.Next() {
 		var status int
 		var insertDate mysql.NullTime
-		var clickTime mysql.NullTime
 		err = rows.Scan(
-			&fleet[n].ID,
 			&fleet[n].OrderID,
-			&fleet[n].DriverConnID,
 			&insertDate,
-			&clickTime,
 			&status,
-			&fleet[n].TaxiFleetID,
-			&fleet[n].UnitID,
-			&fleet[n].Active,
+			&fleet[n].CarNum,
+			&fleet[n].Name,
 		)
 
 		if insertDate.Valid {
 			fleet[n].InsertDate = insertDate.Time.Format("2 Jan 2006 at 15:04")
 		} else {
 			fleet[n].InsertDate = ""
-		}
-
-		if clickTime.Valid {
-			fleet[n].ClickTime = clickTime.Time.Format("2 Jan 2006 at 15:04")
-		} else {
-			fleet[n].ClickTime = ""
 		}
 
 		fleet[n].Status = statusToDesc(status)

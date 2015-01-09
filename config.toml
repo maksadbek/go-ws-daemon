@@ -6,4 +6,5 @@
 		port = 6379
 		chan = "orders"
 [srv]
+    ip = "127.0.0.1:"
 	port = "8881"

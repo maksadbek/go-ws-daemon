@@ -11,3 +11,13 @@ background: #E6F1FF;
 .hoverTable tr:hover {
 background-color: #FFFFFF;
 }
+div#preloader > div.loader {
+    background = url(/assets/img/loader.gif);
+}
+
+.vertical-center {
+    min-height: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}

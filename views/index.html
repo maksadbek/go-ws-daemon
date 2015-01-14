@@ -65,7 +65,6 @@
 
             var OrderList = React.createClass({
                 render: function() {
-
                     var orderNodes = this.props.data.map(function (order) {
                         return (
                             <Order  
@@ -74,6 +73,7 @@
                                     InsertDate = {order.InsertDate}
                                     CarNum = {order.CarNum}
                                     Name = {order.Name}
+                                    StCode = {order.StCode}
                                     >
                             </Order>
                         );
@@ -97,6 +97,9 @@
 
             var Order = React.createClass({
                 render: function(){
+                    var stImgURL = "/assets/img/" + 
+                                    this.props.StCode +
+                                    ".png";
                     return(
                     <tr>
                         <td className="order-id">
@@ -106,7 +109,7 @@
                                 {this.props.InsertDate}
                         </td>
                         <td className="order-id">
-                                {this.props.Status}
+                                <img src={stImgURL}/> <span>{this.props.Status}</span>
                         </td>
                         <td className="order-id">
                                 {this.props.Name}

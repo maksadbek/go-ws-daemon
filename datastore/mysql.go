@@ -13,6 +13,7 @@ type orderLog struct {
 	Status     string
 	Name       string
 	CarNum     string
+	StCode     int
 }
 
 type Where struct {
@@ -68,6 +69,9 @@ func statusToDesc(status int) string {
 		return "Водитель отменил: Технический неполадка"
 	case 18:
 		return "Водитель отменил: Другая причина отказа"
+	case 44:
+		return "Передаем другому водителю"
+
 	}
 	return "Статус не определен: " + strconv.Itoa(status)
 }
@@ -104,12 +108,13 @@ func GetAll(where Where, last int) (Fleet, error) {
 		)
 
 		if insertDate.Valid {
-			fleet[n].InsertDate = insertDate.Time.Format("2 Jan 2006 at 15:04")
+			fleet[n].InsertDate = insertDate.Time.Format("2 01 2006 at 15:04")
 		} else {
 			fleet[n].InsertDate = ""
 		}
 
 		fleet[n].Status = statusToDesc(status)
+		fleet[n].StCode = status
 
 		n += 1
 	}

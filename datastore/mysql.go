@@ -33,6 +33,8 @@ func statusToDesc(status int) string {
 	switch status {
 	case 0:
 		return "В ожидании, новый заказ"
+	case -2:
+		return "Клиент оповешен"
 	case 1:
 		return "Принять Водителем"
 	case 2:
@@ -71,6 +73,8 @@ func statusToDesc(status int) string {
 		return "Водитель отменил: Другая причина отказа"
 	case 44:
 		return "Передаем другому водителю"
+	case 20:
+		return "Водитель оповешен"
 
 	}
 	return "Статус не определен: " + strconv.Itoa(status)

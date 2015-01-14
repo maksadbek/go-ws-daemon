@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -13,7 +14,10 @@ import (
 )
 
 func main() {
-	d, err := ioutil.ReadFile("config.toml")
+	confPath := *flag.String("conf", "config.toml", "configuration file")
+	viewsPath := *flag.String("views", "views", "views folder")
+	flag.Parse()
+	d, err := ioutil.ReadFile(confPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -25,7 +29,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	t, err := template.ParseFiles("views/index.html")
+	t, err := template.ParseFiles(viewsPath + "/index.html")
 	if err != nil {
 		log.Fatal(err)
 	}

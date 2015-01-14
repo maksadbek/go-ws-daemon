@@ -2,9 +2,8 @@ package datastore
 
 import (
 	"database/sql"
-	"strconv"
-
 	"github.com/go-sql-driver/mysql"
+	"strconv"
 )
 
 type orderLog struct {

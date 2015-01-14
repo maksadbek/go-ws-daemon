@@ -37,6 +37,7 @@ func main() {
 	route.Initialize(config, t)
 
 	http.HandleFunc("/", route.Index)
+	http.Handle("/favicon.ico", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.HandleFunc("/orders", route.GetLastOrders)
 

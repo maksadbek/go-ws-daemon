@@ -12,7 +12,7 @@ func TestInitialize(t *testing.T) {
 		t.Error(err)
 	}
 	want := 5
-	row, err := GetAll(Where{Field: "taxi_fleet_id", Crit: "=", Value: "202"}, want)
+	row, err := GetAllOrderLogs(Where{Field: "taxi_fleet_id", Crit: "=", Value: "202"}, want)
 	if err != nil {
 		t.Error(err)
 	}
@@ -21,4 +21,11 @@ func TestInitialize(t *testing.T) {
 		t.Errorf("want %d got %d", want, len(row))
 	}
 	fmt.Printf("%+v\n", row)
+
+	activeOrders, err := GetAllActiveOrders(202, 10)
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Printf("%+v\n", activeOrders)
 }

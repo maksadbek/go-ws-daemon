@@ -65,3 +65,30 @@ client_phone_number: 998000000000
        driver_phone: NULL
           user_name: newmax
 ```
+
+```SQL
+SELECT * FROM (
+			   SELECT
+				   o.*, astext(o.coord_from_adres) as coord_from_adres_t, astext(o.coord_to_adres) as coord_to_adres_t, c.Mobile as client_phone_number,
+				   c.FirstName as client_name, CONCAT(u.name, ' ', u.number) as car_number, u.id as unit_id,
+				   IF (o.status in (2,4,8,9,11,12,13,14,15,16,17,18), UNIX_TIMESTAMP(CURRENT_TIMESTAMP)-UNIX_TIMESTAMP(`status_time`), 0) as vaqtRazn,
+				   IF (o.status in (7), UNIX_TIMESTAMP(CURRENT_TIMESTAMP)-UNIX_TIMESTAMP(`status_time`), 0) as vaqtRazn_7,
+				   IF (o.status = 0, UNIX_TIMESTAMP(`time_order`) - UNIX_TIMESTAMP(CURRENT_TIMESTAMP), 0) as BUDvaqtRazn,
+				   d.driver_phone, us.login as user_name
+			   FROM
+				   max_taxi_incoming_orders o
+				   LEFT OUTER JOIN max_taxi_server_clients c ON c.ClientID = o.client_id
+				   LEFT OUTER JOIN max_drivers d ON d.id = o.driver_id
+				   LEFT OUTER JOIN max_units u ON u.id = d.unit_id
+				   LEFT OUTER JOIN max_users us ON us.id = o.user_id
+			   WHERE
+				   ((o.driver_id <> 0 AND o.driver_id in (SELECT id FROM max_drivers WHERE fleet_id = 202))
+				   OR
+				   (o.driver_id = 0 AND companies like '%202%'))
+		   ) t
+		   WHERE
+			   (vaqtRazn < 3600 AND vaqtRazn_7 < 120) AND BUDvaqtRazn < 2400  
+		    
+		   LIMIT
+			  0, 50
+```

@@ -15,6 +15,32 @@ type orderLog struct {
 	StCode     int
 }
 
+type activeOrder struct {
+	id            int       `db: "id"`
+	sid           int       `db: "sid"`
+	userID        int       `db: "user_id"`
+	clientID      int       `db: "client_id"`
+	driverID      int       `db: "driver_id"`
+	status        int       `db: "status"`
+	pushLifeTime  int       `db: "push_life_time"`
+	drArrTime     int       `db: "driver_arrival_time"`
+	reqDate       time.Time `db: "date_request"`
+	addrFrom      string    `db: "from_adres"`
+	fromSubReg    string    `db: "sub_region_from"`
+	fromCoordAddr string    `db: "coord_from_adres"`
+	fromPoiAddr   string    `db: "poi_from_adress"`
+	toAddr        string    `db: "to_adres"`
+	toSubReg      string    `db: "sub_region_to"`
+	coordToAddr   string    `db: "coord_to_adres"`
+	date          time.Time `db: "date"`
+	orderTime     time.Time `db: "time_order"`
+	reqs          int       `db "reqs"`
+	companies     int       `db "comanies"`
+	orderFrom     int       `db "orderFrom"`
+	distance      int       `db "distance"`
+	desc          string    `db "description"`
+}
+
 type Where struct {
 	Field string
 	Crit  string

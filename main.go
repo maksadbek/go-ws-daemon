@@ -14,10 +14,10 @@ import (
 )
 
 func main() {
-	confPath := *flag.String("conf", "config.toml", "configuration file")
-	viewsPath := *flag.String("views", "views", "views folder")
+	confPath := flag.String("conf", "config.toml", "configuration file")
+	viewsPath := flag.String("views", "views", "views folder")
 	flag.Parse()
-	d, err := ioutil.ReadFile(confPath)
+	d, err := ioutil.ReadFile(*confPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,7 +29,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	t, err := template.ParseFiles(viewsPath + "/index.html")
+	t, err := template.ParseFiles(*viewsPath + "/index.html")
 	if err != nil {
 		log.Fatal(err)
 	}

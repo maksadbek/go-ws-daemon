@@ -44,12 +44,20 @@ render: function() {
     var orderNodes = this.props.data.map(function (order) {
         return (
             <Order  
-                    OrderID = {order.OrderID}
+                    OrderID = {order.ID}
                     Status = {order.Status}
-                    InsertDate = {order.InsertDate}
-                    CarNum = {order.CarNum}
-                    Name = {order.Name}
-                    StCode = {order.StCode}
+                    ClientID = {order.ClientID}
+                    AddrFrom = { order.AddrFrom}
+                    Date = {order.Date}
+                    OrderTime = {order.OrderTime}
+                    Company = {order.Companies}
+                    TariffID = {order.TariffID}
+                    ClientPhone = { order.ClientPhone }
+                    ClientName = { order.ClientName }
+                    CarNum = { order.CarNum }
+                    DriverPhone = { order.DriverPhone }
+                    UserName = {order.UserName }
+                    StCode = { order.StCode }
                     >
             </Order>
         );
@@ -59,10 +67,18 @@ render: function() {
         <table className="hoverTable OrderList table table-bordered">
             <tr>
                 <th>Order ID</th>
-                <th>Insert Date</th>
                 <th>Status</th>
-                <th>Name</th>
+                <th>Client ID</th>
+                <th>Address From</th>
+                <th>Date</th>
+                <th>Order Time</th>
+                <th>Fleet</th>
+                <th>Tariff ID</th>
+                <th>Client Phone</th>
+                <th>Client Name</th>
                 <th>Car Number</th>
+                <th>Driver Phone</th>
+                <th>Username</th>
             </tr>
             {orderNodes}
         </table>
@@ -82,16 +98,40 @@ var Order = React.createClass({
                     {this.props.OrderID}
             </td>
             <td className="order-id">
-                    {this.props.InsertDate}
-            </td>
-            <td className="order-id">
                     <img src={stImgURL}/> <span>{this.props.Status}</span>
             </td>
             <td className="order-id">
-                    {this.props.Name}
+                    {this.props.ClientID}
+            </td>
+            <td className="order-id">
+                    {this.props.AddrFrom}
+            </td>
+            <td className="order-id">
+                    {this.props.Date}
+            </td>
+            <td className="order-id">
+                    {this.props.OrderTime}
+            </td>
+            <td className="order-id">
+                    {this.props.Company}
+            </td>
+            <td className="order-id">
+                    {this.props.TariffID}
+            </td>
+            <td className="order-id">
+                    {this.props.ClientPhone}
+            </td>
+            <td className="order-id">
+                    {this.props.ClientName}
             </td>
             <td className="order-id">
                     {this.props.CarNum}
+            </td>
+            <td className="order-id">
+                    {this.props.DriverPhone}
+            </td>
+            <td className="order-id">
+                    {this.props.UserName}
             </td>
         </tr>
         );
@@ -99,7 +139,7 @@ var Order = React.createClass({
 });
 React.render(
         {{ $fleet := . }}
-        <OrderBox url="/orders?fleet={{ $fleet }}" pollInterval={2000} />, 
+        <OrderBox url="/orders" pollInterval={5000} />, 
         document.getElementById('orders')
 );
 </script>

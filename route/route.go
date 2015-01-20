@@ -27,6 +27,30 @@ func Initialize(config conf.App, temp *template.Template) error {
 	return err
 }
 
+func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
+	log.Println("get active orders")
+	webSiteCookies, err := r.Cookie("PHPSESSID")
+	if err != nil {
+		log.Println("failure")
+		fmt.Fprintf(w, "login fail")
+	}
+
+	m, err := url.ParseQuery(r.URL.RawQuery)
+	if err != nil {
+		log.Println("error")
+		panic(err)
+	}
+
+	hash, ok := m["hash"]
+	if ok && hash[0] == webSiteCookies.Value {
+		log.Println("success")
+		t.ExecuteTemplate(w, "activeOrders", nil)
+	} else {
+		log.Println("failure")
+		fmt.Fprintf(w, "login fail")
+	}
+}
+
 //GetLastOrders n orders and send in JSON
 func GetLastOrders(w http.ResponseWriter, r *http.Request) {
 	m, err := url.ParseQuery(r.URL.RawQuery)
@@ -76,6 +100,7 @@ func GetLastOrders(w http.ResponseWriter, r *http.Request) {
 
 //Index file
 func Index(w http.ResponseWriter, r *http.Request) {
+	log.Println("index")
 	fmt.Println(r.URL.RawQuery)
 	m, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {

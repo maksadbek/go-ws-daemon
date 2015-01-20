@@ -17,7 +17,7 @@ type orderLog struct {
 }
 
 type activeOrder struct {
-	Id          int `db: "id"`
+	ID          int `db: "id"`
 	ClientID    int `db: "client_id"`
 	Status      string
 	AddrFrom    string `db: "from_adres"`
@@ -52,28 +52,28 @@ func sqlConnect(DSN string) (*sql.DB, error) {
 func GetAllActiveOrders(last int) (Order, error) {
 	query :=
 		`
-		SELECT                                                                  
-			o.id,                                                                
-			o.STATUS,                                                            
-			o.client_id,                                                        
-			o.from_adres,                                                        
-			o.DATE,                                                              
-			o.time_order,                                                        
-			o.companies,                                                        
-			o.tariffID,                                                          
-			c.Mobile AS client_phone_number,                                    
-			d.driver_phone,                                                      
-			us.login AS user_name,                                              
-			CONCAT(u.name, ' ', u.NUMBER) AS car_number,                        
-			c.FirstName AS client_name                                          
-		FROM                                                                    
-			max_taxi_incoming_orders o                                          
+		SELECT
+			o.id,
+			o.STATUS,
+			o.client_id,
+			o.from_adres,
+			o.DATE,
+			o.time_order,
+			o.companies,
+			o.tariffID,
+			c.Mobile AS client_phone_number,
+			d.driver_phone,
+			us.login AS user_name,
+			CONCAT(u.name, ' ', u.NUMBER) AS car_number,
+			c.FirstName AS client_name
+		FROM
+			max_taxi_incoming_orders o
 			LEFT OUTER JOIN max_taxi_server_clients c ON c.ClientID = o.client_id
-			LEFT OUTER JOIN max_drivers d ON d.id = o.driver_id                  
-			LEFT OUTER JOIN max_units u ON u.id = d.unit_id                      
-			LEFT OUTER JOIN max_users us ON us.id = o.user_id                    
+			LEFT OUTER JOIN max_drivers d ON d.id = o.driver_id
+			LEFT OUTER JOIN max_units u ON u.id = d.unit_id
+			LEFT OUTER JOIN max_users us ON us.id = o.user_id
 		WHERE
-		      o.driver_id <> 0                                 
+		      o.driver_id <> 0
 		  LIMIT 0, ` + strconv.Itoa(last)
 
 	orders := make(Order, last)
@@ -98,7 +98,7 @@ func GetAllActiveOrders(last int) (Order, error) {
 		var status int
 
 		err := rows.Scan(
-			&orders[n].Id,
+			&orders[n].ID,
 			&orders[n].ClientID,
 			&status,
 			&orders[n].AddrFrom,
@@ -125,10 +125,13 @@ func GetAllActiveOrders(last int) (Order, error) {
 
 		if tmpDate.Valid {
 			orders[n].Date = tmpDate.Time.Format("2 01 2006 at 15:04")
-		} else if tmpOrderTime.Valid {
-			orders[n].OrderTime = tmpOrderTime.Time.Format("2 01 2006 at 15:04")
 		} else {
 			orders[n].Date = ""
+		}
+
+		if tmpOrderTime.Valid {
+			orders[n].OrderTime = tmpOrderTime.Time.Format("2 01 2006 at 15:04")
+		} else {
 			orders[n].OrderTime = ""
 		}
 

@@ -40,10 +40,10 @@ func main() {
 
 	route.Initialize(config, t)
 
-	http.HandleFunc("/", route.Index)
 	http.Handle("/favicon.ico", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
+	http.HandleFunc("/active", route.GetActiveOrders)
 	http.HandleFunc("/orders", route.GetLastOrders)
-
+	http.HandleFunc("/", route.Index)
 	log.Fatal(http.ListenAndServe(config.SRV.IP+config.SRV.Port, nil))
 }

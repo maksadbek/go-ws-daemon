@@ -22,7 +22,7 @@ func TestInitialize(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", row)
 
-	activeOrders, err := GetAllActiveOrders(202, 10)
+	activeOrders, err := GetAllActiveOrders(10)
 	if err != nil {
 		t.Error(err)
 	}

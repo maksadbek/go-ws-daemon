@@ -33,21 +33,45 @@ func GetLastOrders(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	fleetID := m["fleet"][0]
+	// Check for existence of the fleet param
+	if f, ok := m["fleet"]; ok {
+		fleetID := f[0] // Get the param from array
+		orders, err := ds.GetAllOrderLogs(
+			ds.Where{
+				Field: "taxi_fleet_id",
+				Crit:  "=",
+				Value: fleetID,
+			},
+			orderLimit,
+		)
 
-	orders, err := ds.GetAll(ds.Where{Field: "taxi_fleet_id", Crit: "=", Value: fleetID}, orderLimit)
-	if err != nil {
-		fmt.Println(err)
+		if err != nil {
+			fmt.Println(err)
+		}
+		var ordersInJson []byte
+		ordersInJson, err = json.Marshal(orders)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, string(ordersInJson))
+	} else {
+		orders, err := ds.GetAllActiveOrders(50)
+		//TODO: make a helper function
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, err.Error())
+		}
+		var ordersJSON []byte
+		ordersJSON, err = json.Marshal(orders)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, err.Error())
+		}
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, string(ordersJSON))
 	}
-
-	var ordersInJson []byte
-	ordersInJson, err = json.Marshal(orders)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, string(ordersInJson))
 }
 
 //Index file

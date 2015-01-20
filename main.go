@@ -29,7 +29,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	t, err := template.ParseFiles(*viewsPath + "/index.html")
+	t, err := template.ParseFiles(
+		*viewsPath+"/index.html",
+		*viewsPath+"/header.html",
+		*viewsPath+"/active.html",
+	)
 	if err != nil {
 		log.Fatal(err)
 	}

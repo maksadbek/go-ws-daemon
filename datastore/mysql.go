@@ -135,7 +135,7 @@ func GetAllActiveOrders(last int) (Order, error) {
 			orders[n].OrderTime = ""
 		}
 
-		orders[n].Status = statusToDesc(status)
+		orders[n].Status = T(strconv.Itoa(status))
 		orders[n].StCode = status
 
 		n += 1
@@ -189,7 +189,7 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 			fleet[n].InsertDate = ""
 		}
 
-		fleet[n].Status = statusToDesc(status)
+		fleet[n].Status = T(strconv.Itoa(status))
 		fleet[n].StCode = status
 
 		n += 1

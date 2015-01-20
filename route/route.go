@@ -31,8 +31,9 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 	log.Println("get active orders")
 	webSiteCookies, err := r.Cookie("PHPSESSID")
 	if err != nil {
-		log.Println("failure")
+		log.Println("failure: no cookie")
 		fmt.Fprintf(w, "login fail")
+		return
 	}
 
 	m, err := url.ParseQuery(r.URL.RawQuery)
@@ -46,7 +47,7 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 		log.Println("success")
 		t.ExecuteTemplate(w, "activeOrders", nil)
 	} else {
-		log.Println("failure")
+		log.Println("failure: hash do not match")
 		fmt.Fprintf(w, "login fail")
 	}
 }

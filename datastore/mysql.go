@@ -197,3 +197,12 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 
 	return fleet, err
 }
+
+func CancelActOrder(id int) error {
+}
+
+func ToNextSt(id int) error {
+}
+
+func ActivateOrder(id int) error {
+}

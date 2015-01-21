@@ -45,5 +45,7 @@ func main() {
 	http.HandleFunc("/active", route.GetActiveOrders)
 	http.HandleFunc("/orders", route.GetLastOrders)
 	http.HandleFunc("/", route.Index)
+
+	log.Printf("Server is running on  %s%s", config.SRV.IP, config.SRV.Port)
 	log.Fatal(http.ListenAndServe(config.SRV.IP+config.SRV.Port, nil))
 }

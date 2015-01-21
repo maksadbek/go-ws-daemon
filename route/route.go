@@ -28,7 +28,7 @@ func Initialize(config conf.App, temp *template.Template) error {
 }
 
 func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
-	log.Println("get active orders")
+	log.Println(r.URL.RequestURI())
 	webSiteCookies, err := r.Cookie("PHPSESSID")
 	if err != nil {
 		log.Println("failure: no cookie")
@@ -45,7 +45,26 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 	hash, ok := m["hash"]
 	if ok && hash[0] == webSiteCookies.Value {
 		log.Println("success")
-		t.ExecuteTemplate(w, "activeOrders", nil)
+
+		// get command,
+		// activate, next, cancel
+		cmd, cmdOk := m["cmd"]
+
+		//get order id to impl. cmd
+		orderID, orderOk := m["id"]
+
+		if cmdOk && orderOk {
+			switch cmd[0] {
+			case "cancel":
+				ds.CancelActOrder(orderID[0])
+			case "next":
+				ds.ToNextSt(orderID[0])
+			case "activate":
+				ds.ActivateOrder(orderID[0])
+			}
+		} else {
+			t.ExecuteTemplate(w, "activeOrders", nil)
+		}
 	} else {
 		log.Println("failure: hash do not match")
 		fmt.Fprintf(w, "login fail")
@@ -54,6 +73,7 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 
 //GetLastOrders n orders and send in JSON
 func GetLastOrders(w http.ResponseWriter, r *http.Request) {
+	log.Println(r.URL.RequestURI())
 	m, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		panic(err)
@@ -101,8 +121,7 @@ func GetLastOrders(w http.ResponseWriter, r *http.Request) {
 
 //Index file
 func Index(w http.ResponseWriter, r *http.Request) {
-	log.Println("index")
-	fmt.Println(r.URL.RawQuery)
+	log.Println(r.URL.RequestURI())
 	m, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {
 		log.Println("error")

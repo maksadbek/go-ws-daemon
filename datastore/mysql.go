@@ -99,8 +99,8 @@ func GetAllActiveOrders(last int) (Order, error) {
 
 		err := rows.Scan(
 			&orders[n].ID,
-			&orders[n].ClientID,
 			&status,
+			&orders[n].ClientID,
 			&orders[n].AddrFrom,
 			&tmpDate,
 			&tmpOrderTime,
@@ -199,10 +199,34 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 }
 
 func CancelActOrder(id int) error {
+	query := `UPDATE max_taxi_incoming_orders
+				SET status = 9 
+				WHERE id = ?`
+	_, err := db.Exec(query, strconv.Itoa(id))
+	return err
 }
 
 func ToNextSt(id int) error {
+	query := `UPDATE max_taxi_incoming_orders
+				SET status = 9 
+				WHERE id = ?`
+	_, err := db.Exec(query, strconv.Itoa(id))
+	return err
 }
 
 func ActivateOrder(id int) error {
+	queryDaemonLog := `UPDATE max_taxi_deamon_log SET active = 0
+	         WHERE order_id = ?`
+	_, err := db.Exec(queryDaemonLog, strconv.Itoa(id))
+	if err != nil {
+		return err
+	}
+	queryIncOrders := `UPDATE max_taxi_incoming_orders SET 
+			status = 0, 
+			driver_id = 0, 
+			date= now(), 
+			time_order = now()
+			WHERE id = ?`
+	_, err = db.Exec(queryIncOrders, strconv.Itoa(id))
+	return err
 }

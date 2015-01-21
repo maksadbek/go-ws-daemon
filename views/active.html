@@ -66,6 +66,7 @@ render: function() {
     return(
         <table className="hoverTable OrderList table table-bordered">
             <tr>
+                <th>Options</th>
                 <th>Order ID</th>
                 <th>Status</th>
                 <th>Client ID</th>
@@ -88,20 +89,78 @@ render: function() {
 
 
 var Order = React.createClass({
+    {{ $hash := . }}
+
+    cancel: function(){
+        var cancelUrl = "/active?hash=" + 
+                        {{$hash}} + 
+                        "&id=" + 
+                        this.props.OrderID + 
+                        "&cmd=cancel";
+
+        console.log(cancelUrl);
+        this.setState({
+            disabled: true
+        })
+        var btnState = this;
+        $.ajax({
+            url: cancelUrl,
+            success: function(data) {
+                btnState.setState({
+                    disabled: false
+                })
+            },
+            error: function(xhr, status, err) {
+                console.err(err.toString());
+            }
+        });
+    },
+
+    activate: function(id){
+        var activateUrl = "/active?hash=" +
+                            {{$hash}} +
+                            "&id=" +
+                            this.props.OrderID +
+                            "&cmd=activate";
+        var btnState = this;
+        $.ajax({
+            url: activateUrl,
+            succes: function(date){
+                btnState.setState({
+                    disabled: false
+                })
+            },
+            error: function(xhr, status, err){
+                   console.err(err.toString());
+            }
+        });
+    },
+    toNext: function(id){
+
+    },
+    getInitialState: function(){
+        return {
+            disabled: false
+        }
+    },
     render: function(){
         var stImgURL = "/assets/img/" + 
                         this.props.StCode +
                         ".png";
         return(
         <tr>
+            <td>
+                <button onClick={this.cancel} disabled={this.state.disabled}>Cancel</button>
+                <button onClick={this.activate} disabled={this.state.disabled}>activate</button>
+            </td>
             <td className="order-id">
                     {this.props.OrderID}
             </td>
             <td className="order-id">
-                    <img src={stImgURL}/> <span>{this.props.Status}</span>
+                <img src={stImgURL}/> <span>{this.props.Status}</span>
             </td>
             <td className="order-id">
-                    {this.props.ClientID}
+                {this.props.ClientID}
             </td>
             <td className="order-id">
                     {this.props.AddrFrom}
@@ -113,7 +172,6 @@ var Order = React.createClass({
                     {this.props.OrderTime}
             </td>
             <td className="order-id">
-                    {this.props.Company}
             </td>
             <td className="order-id">
                     {this.props.TariffID}
@@ -138,7 +196,6 @@ var Order = React.createClass({
     }
 });
 React.render(
-        {{ $fleet := . }}
         <OrderBox url="/orders" pollInterval={5000} />, 
         document.getElementById('orders')
 );

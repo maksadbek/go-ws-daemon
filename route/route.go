@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	_ "time"
 
 	"github.com/Maksadbek/go-ws-daemon/conf"
@@ -41,9 +42,11 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 		log.Println("error")
 		panic(err)
 	}
+	log.Println(m)
 
-	hash, ok := m["hash"]
-	if ok && hash[0] == webSiteCookies.Value {
+	h, ok := m["hash"]
+	if ok && h[0] == webSiteCookies.Value {
+		hash := h[0]
 		log.Println("success")
 
 		// get command,
@@ -54,16 +57,27 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 		orderID, orderOk := m["id"]
 
 		if cmdOk && orderOk {
+			id, err := strconv.Atoi(orderID[0])
+			if err != nil {
+				panic(err)
+			}
 			switch cmd[0] {
 			case "cancel":
-				ds.CancelActOrder(orderID[0])
+				log.Println(cmd[0], orderID[0])
+				log.Println("cancel")
+				err = ds.CancelActOrder(id)
+				if err != nil {
+					panic(err)
+				}
 			case "next":
-				ds.ToNextSt(orderID[0])
+				log.Println("next")
+				ds.ToNextSt(id)
 			case "activate":
-				ds.ActivateOrder(orderID[0])
+				log.Println("activate")
+				ds.ActivateOrder(id)
 			}
 		} else {
-			t.ExecuteTemplate(w, "activeOrders", nil)
+			t.ExecuteTemplate(w, "activeOrders", hash)
 		}
 	} else {
 		log.Println("failure: hash do not match")

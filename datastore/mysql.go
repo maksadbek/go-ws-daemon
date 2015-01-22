@@ -207,8 +207,8 @@ func CancelActOrder(id int) error {
 }
 
 func ToNextSt(id int) error {
-	query := `UPDATE max_taxi_incoming_orders
-				SET status = 9 
+	query := `UPDATE max_taxi_incoming_orders 
+				SET status = ?, next_step = ? 
 				WHERE id = ?`
 	_, err := db.Exec(query, strconv.Itoa(id))
 	return err

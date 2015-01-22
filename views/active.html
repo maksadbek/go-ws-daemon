@@ -114,7 +114,7 @@ var Order = React.createClass({
         });
     },
 
-    activate: function(id){
+    activate: function(){
         var activateUrl = "/active?hash=" +
                             {{$hash}} +
                             "&id=" +
@@ -123,7 +123,7 @@ var Order = React.createClass({
         var btnState = this;
         $.ajax({
             url: activateUrl,
-            succes: function(date){
+            succes: function(data){
                 btnState.setState({
                     disabled: false
                 })
@@ -133,8 +133,26 @@ var Order = React.createClass({
             }
         });
     },
-    toNext: function(id){
-
+    toNext: function(){
+        var toNextUrl = "/active?hash=" +
+                        {{ $hash }} +
+                        "&id=" +
+                        this.props.OrderID +
+                        "&status=" +
+                        this.props.StCode +
+                        "&cmd=next";
+        btnState = this;
+        $.ajax({
+            url: toNextUrl,
+            succes: function(data) {
+                btnState.setState({
+                    disabled: false
+                })
+            },
+            error: function(xhr, status, err) {
+                console.err(err.toString());
+            }
+        })
     },
     getInitialState: function(){
         return {
@@ -148,8 +166,9 @@ var Order = React.createClass({
         return(
         <tr>
             <td>
-                <button onClick={this.cancel} disabled={this.state.disabled}>Cancel</button>
+                <button onClick={this.cancel} disabled={this.state.disabled}>cancel</button>
                 <button onClick={this.activate} disabled={this.state.disabled}>activate</button>
+                <button onClick={this.toNext} disabled={this.state.disabled}>next</button>
             </td>
             <td className="order-id">
                     {this.props.OrderID}

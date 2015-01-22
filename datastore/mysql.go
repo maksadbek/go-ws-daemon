@@ -206,11 +206,39 @@ func CancelActOrder(id int) error {
 	return err
 }
 
-func ToNextSt(id int) error {
+func ToNextSt(id int, status int) error {
+
 	query := `UPDATE max_taxi_incoming_orders 
 				SET status = ?, next_step = ? 
 				WHERE id = ?`
-	_, err := db.Exec(query, strconv.Itoa(id))
+	var newSt string
+	var err error
+	switch status {
+	case 1:
+		newSt = "5"
+
+		_, err = db.Exec(query, newSt, newSt, strconv.Itoa(id))
+		if err != nil {
+			return err
+		}
+	case 5:
+		newSt = "6"
+		_, err = db.Exec(query, newSt, newSt, strconv.Itoa(id))
+		if err != nil {
+			return err
+		}
+	case 2:
+	case 4:
+	case 9:
+		q := `UPDATE max_taxi_incoming_orders
+			 SET next_step = '1', order_attached = 1,
+			time_order = now(), status = 1
+			 where id = ?`
+		_, err = db.Exec(q, strconv.Itoa(id))
+		if err != nil {
+			return err
+		}
+	}
 	return err
 }
 

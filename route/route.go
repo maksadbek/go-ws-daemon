@@ -71,10 +71,28 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 				}
 			case "next":
 				log.Println("next")
-				ds.ToNextSt(id)
+				st, stOk := m["status"]
+				if stOk {
+					log.Println("st OK")
+
+					//cast status from str to int
+					status, err := strconv.Atoi(st[0])
+					if err != nil {
+						panic(err)
+					}
+
+					//pass st and order id
+					err = ds.ToNextSt(id, status)
+					if err != nil {
+						panic(err)
+					}
+				}
 			case "activate":
 				log.Println("activate")
-				ds.ActivateOrder(id)
+				err = ds.ActivateOrder(id)
+				if err != nil {
+					panic(err)
+				}
 			}
 		} else {
 			t.ExecuteTemplate(w, "activeOrders", hash)

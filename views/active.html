@@ -87,11 +87,11 @@ render: function() {
 
 
 var Order = React.createClass({
-    {{ $hash := . }}
+    hash : "{{  . }}",
 
     cancel: function(){
-        var cancelUrl = "/active?hash=" + 
-                        {{$hash}} + 
+        var cancelUrl = "/active?hash=" +
+                        this.hash + 
                         "&id=" + 
                         this.props.OrderID + 
                         "&cmd=cancel";
@@ -116,7 +116,7 @@ var Order = React.createClass({
 
     activate: function(){
         var activateUrl = "/active?hash=" +
-                            {{$hash}} +
+                            this.hash +
                             "&id=" +
                             this.props.OrderID +
                             "&cmd=activate";
@@ -135,7 +135,7 @@ var Order = React.createClass({
     },
     toNext: function(){
         var toNextUrl = "/active?hash=" +
-                        {{ $hash }} +
+                        this.hash +
                         "&id=" +
                         this.props.OrderID +
                         "&status=" +
@@ -160,9 +160,7 @@ var Order = React.createClass({
         }
     },
     render: function(){
-        var stImgURL = "/assets/img/" + 
-                        this.props.StCode +
-                        ".png";
+        var stImgURL = "/assets/img/" + this.props.StCode + ".png";
         return(
         <tr>
             <td>

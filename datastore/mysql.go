@@ -2,7 +2,9 @@ package datastore
 
 import (
 	"database/sql"
+	"log"
 	"strconv"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -70,13 +72,15 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 		WHERE
 		      o.driver_id <> 0 ` +
 			where +
+			`ORDER BY o.time_order DESC ` +
 			` LIMIT 0, ` + strconv.Itoa(last)
 	orders := make(Order, last)
-
+	start := time.Now()
 	rows, err := db.Query(query)
 	if err != nil {
 		return orders, err
 	}
+	log.Printf("query execution time ===> %v\n", time.Since(start))
 	defer rows.Close()
 	// n is iteration index for each
 	var n = 0

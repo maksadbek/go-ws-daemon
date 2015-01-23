@@ -42,6 +42,106 @@ var OrderBox = React.createClass({
 var OrderList = React.createClass({
 render: function() {
     var orderNodes = this.props.data.map(function (order) {
+        var statuses= [
+        { //0
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { //1
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { //2
+            "next": true,
+            "cancel": true,
+            "activate": false
+        },
+        { //3
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { //4 <---
+            "next": true,
+            "cancel": false,
+            "activate": true
+            
+        },
+        { // 5
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { // 6
+            "next": true,
+            "cancel": false,
+            "activate": true            
+        },
+        { // 7
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { // 8
+            "next": true,
+            "cancel": true,
+            "activate": false
+        },
+        { // 9
+            "next": true,
+            "cancel": true,
+            "activate": false
+        },
+        { // 10
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        { // 11
+            "next": false,
+            "cancel": false,
+            "activate": true  
+        }, 
+        { // 14
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        { //13
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        {// 14
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        { // 15
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        {// 16
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        {// 17
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        {// 18
+            "next": false,
+            "cancel": false,
+            "activate": true
+        }
+    ];
+    var BtnState = statuses[order.StCode]
+
         return (
             <Order  
                     OrderID = {order.ID}
@@ -58,6 +158,7 @@ render: function() {
                     DriverPhone = { order.DriverPhone }
                     UserName = {order.UserName }
                     StCode = { order.StCode }
+                    BtnsState = { BtnState }
                     >
             </Order>
         );
@@ -156,12 +257,13 @@ var Order = React.createClass({
     },
     render: function(){
         var stImgURL = "/assets/img/" + this.props.StCode + ".png";
+        console.log(this);
         return(
         <tr>
             <td>
-                <button onClick={this.cancel} disabled={this.state.disabled}>cancel</button>
-                <button onClick={this.activate} disabled={this.state.disabled}>activate</button>
-                <button onClick={this.toNext} disabled={this.state.disabled}>next</button>
+                <button onClick={this.cancel} hidden={ this.props.BtnsState.cancel} disabled={this.state.disabled}>cancel</button>
+                <button onClick={this.activate} hidden={this.props.BtnsState.activate} disabled={this.state.disabled}>activate</button>
+                <button onClick={this.toNext} hidden={this.props.BtnsState.next} disabled={this.state.disabled}>next</button>
             </td>
             <td className="order-id">
                     {this.props.OrderID}
@@ -187,7 +289,7 @@ var Order = React.createClass({
     }
 });
 React.render(
-        <OrderBox url="/orders?type=orders" pollInterval={5000} />, 
+        <OrderBox url="/orders?type=orders" pollInterval={1000} />, 
         document.getElementById('orders')
 );
 </script>

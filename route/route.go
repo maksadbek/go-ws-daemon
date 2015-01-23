@@ -169,6 +169,7 @@ func sendOrders(w http.ResponseWriter, orders []byte) {
 
 func sendErr(w http.ResponseWriter, err error) bool {
 	if err != nil {
+		fmt.Printf("%+v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, err.Error())
 		return true

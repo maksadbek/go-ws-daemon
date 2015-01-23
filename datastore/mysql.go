@@ -18,19 +18,13 @@ type orderLog struct {
 
 type activeOrder struct {
 	ID          int `db: "id"`
-	ClientID    int `db: "client_id"`
 	Status      string
-	AddrFrom    string `db: "from_adres"`
-	StCode      int    `db: "status"`
-	Date        string `db: "date"`
 	OrderTime   string `db: "time_order"`
 	Companies   string `db: "comanies"`
-	TariffID    string `db: "tariffID"`
 	ClientPhone string `db: "client_phone_number`
-	ClientName  string `db: "client_name"`
 	CarNum      string `db: "car_number"`
 	DriverPhone string `db: "driver_phone"`
-	UserName    string `db: "user_name"`
+	StCode      int    `db: "status"`
 }
 
 type Where struct {
@@ -60,19 +54,13 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 	query :=
 		`
 		SELECT
-			o.id,
-			o.STATUS,
-			o.client_id,
-			o.from_adres,
-			o.DATE,
-			o.time_order,
-			o.companies,
-			o.tariffID,
-			c.Mobile AS client_phone_number,
-			d.driver_phone,
-			us.login AS user_name,
-			CONCAT(u.name, ' ', u.NUMBER) AS car_number,
-			c.FirstName AS client_name
+				o.id,
+				o.STATUS,
+				o.time_order,
+				o.companies,
+				c.Mobile AS client_phone_number,
+				d.driver_phone,
+				CONCAT(u.name, ' ', u.NUMBER) AS car_number
 		FROM
 			max_taxi_incoming_orders o
 			LEFT OUTER JOIN max_taxi_server_clients c ON c.ClientID = o.client_id
@@ -94,46 +82,27 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 	var n = 0
 
 	for rows.Next() {
-		var tmpDate mysql.NullTime
 		var tmpOrderTime mysql.NullTime
-		var tmpTariffID []byte
 		var tmpClientPhone []byte
-		var tmpClientName []byte
 		var tmpCarNum []byte
 		var tmpDriverPhone []byte
-		var tmpUserName []byte
 		var status int
 
 		err := rows.Scan(
 			&orders[n].ID,
 			&status,
-			&orders[n].ClientID,
-			&orders[n].AddrFrom,
-			&tmpDate,
 			&tmpOrderTime,
 			&orders[n].Companies,
-			&tmpTariffID,
 			&tmpClientPhone,
-			&tmpClientName,
 			&tmpCarNum,
 			&tmpDriverPhone,
-			&tmpUserName,
 		)
-		orders[n].TariffID = string(tmpTariffID)
 		orders[n].ClientPhone = string(tmpClientPhone)
-		orders[n].ClientName = string(tmpClientName)
 		orders[n].CarNum = string(tmpCarNum)
 		orders[n].DriverPhone = string(tmpDriverPhone)
-		orders[n].UserName = string(tmpUserName)
 
 		if err != nil {
 			return orders, err
-		}
-
-		if tmpDate.Valid {
-			orders[n].Date = tmpDate.Time.Format("2 01 2006 at 15:04")
-		} else {
-			orders[n].Date = ""
 		}
 
 		if tmpOrderTime.Valid {

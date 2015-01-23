@@ -69,15 +69,10 @@ render: function() {
                 <th>Options</th>
                 <th>Order ID</th>
                 <th>Status</th>
-                <th>Client ID</th>
-                <th>Address From</th>
-                <th>Date</th>
                 <th>Order Time</th>
                 <th>Client Phone</th>
-                <th>Client Name</th>
                 <th>Car Number</th>
                 <th>Driver Phone</th>
-                <th>Username</th>
             </tr>
             {orderNodes}
         </table>
@@ -175,31 +170,17 @@ var Order = React.createClass({
                 <img src={stImgURL}/> <span>{this.props.Status}</span>
             </td>
             <td className="order-id">
-                {this.props.ClientID}
-            </td>
-            <td className="order-id">
-                    {this.props.AddrFrom}
-            </td>
-            <td className="order-id">
-                    {this.props.Date}
-            </td>
-            <td className="order-id">
                     {this.props.OrderTime}
             </td>
             <td className="order-id">
                     {this.props.ClientPhone}
             </td>
-            <td className="order-id">
-                    {this.props.ClientName}
-            </td>
+
             <td className="order-id">
                     {this.props.CarNum}
             </td>
             <td className="order-id">
                     {this.props.DriverPhone}
-            </td>
-            <td className="order-id">
-                    {this.props.UserName}
             </td>
         </tr>
         );

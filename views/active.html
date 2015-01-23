@@ -90,7 +90,7 @@ var Order = React.createClass({
     hash : "{{  . }}",
 
     cancel: function(){
-        var cancelUrl = "/active?hash=" +
+        var cancelUrl = "/active-orders?hash=" +
                         this.hash + 
                         "&id=" + 
                         this.props.OrderID + 
@@ -115,7 +115,7 @@ var Order = React.createClass({
     },
 
     activate: function(){
-        var activateUrl = "/active?hash=" +
+        var activateUrl = "/active-orders?hash=" +
                             this.hash +
                             "&id=" +
                             this.props.OrderID +
@@ -134,7 +134,7 @@ var Order = React.createClass({
         });
     },
     toNext: function(){
-        var toNextUrl = "/active?hash=" +
+        var toNextUrl = "/active-orders?hash=" +
                         this.hash +
                         "&id=" +
                         this.props.OrderID +
@@ -206,7 +206,7 @@ var Order = React.createClass({
     }
 });
 React.render(
-        <OrderBox url="/orders" pollInterval={5000} />, 
+        <OrderBox url="/orders?type=orders" pollInterval={5000} />, 
         document.getElementById('orders')
 );
 </script>

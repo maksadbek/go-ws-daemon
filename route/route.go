@@ -14,7 +14,9 @@ import (
 	ds "github.com/Maksadbek/go-ws-daemon/datastore"
 )
 
-var orderLimit int
+var orderLimit int //SQL limit for orders
+var logLimit int   //SQL limit for daemon logs
+
 var t *template.Template
 
 //Initialize the templates, ds
@@ -24,7 +26,8 @@ func Initialize(config conf.App, temp *template.Template) error {
 	if err != nil {
 		return err
 	}
-	orderLimit = config.DS.Mysql.Limit
+	orderLimit = config.DS.Mysql.OrderLimit
+	logLimit = config.DS.Mysql.LogLimit
 	return err
 }
 
@@ -104,55 +107,76 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 }
 
 //GetLastOrders n orders and send in JSON
-func GetLastOrders(w http.ResponseWriter, r *http.Request) {
+func GetOrders(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.URL.RequestURI())
 	m, err := url.ParseQuery(r.URL.RawQuery)
-	if err != nil {
-		panic(err)
-	}
-	// Check for existence of the fleet param
-	if f, ok := m["fleet"]; ok {
-		fleetID := f[0] // Get the param from array
-		orders, err := ds.GetAllOrderLogs(
-			ds.Where{
-				Field: "taxi_fleet_id",
-				Crit:  "=",
-				Value: fleetID,
-			},
-			orderLimit,
-		)
+	sendErr(w, err)
 
-		if err != nil {
-			fmt.Println(err)
-		}
-		var ordersInJson []byte
-		ordersInJson, err = json.Marshal(orders)
-		if err != nil {
-			fmt.Println(err)
-		}
+	f, fleetOk := m["fleet"]
 
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, string(ordersInJson))
-	} else {
-		orders, err := ds.GetAllActiveOrders(50)
-		//TODO: make a helper function
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, err.Error())
+	// Check for existence of the type param
+	if t, ok := m["type"]; ok {
+		reqType := t[0]
+		switch reqType {
+		case "logs":
+			if fleetOk {
+				fleetID := f[0] // Get the param from array
+				order, err := ds.GetAllOrderLogs(
+					ds.Where{
+						Field: "taxi_fleet_id",
+						Crit:  "=",
+						Value: fleetID,
+					},
+					logLimit,
+				)
+
+				if sendErr(w, err) {
+					return
+				}
+				orderJSON, err := json.Marshal(order)
+				sendOrders(w, orderJSON)
+			}
+		case "orders":
+			var orderJSON []byte
+			var err error
+			if fleetOk { //if fleet is given, filter by fleet
+				//convert fleetID from string to int
+				fleet, err := strconv.Atoi(f[0])
+				if sendErr(w, err) {
+					return
+				}
+				order, err := ds.GetAllActiveOrders(fleet, orderLimit)
+				orderJSON, err = json.Marshal(order)
+			} else { //if fleet is not given, do not filter
+				order, err := ds.GetAllActiveOrders(0, orderLimit)
+				if sendErr(w, err) {
+					return
+				}
+				orderJSON, err = json.Marshal(order)
+			}
+			if sendErr(w, err) {
+				return
+			}
+			sendOrders(w, orderJSON)
 		}
-		var ordersJSON []byte
-		ordersJSON, err = json.Marshal(orders)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			fmt.Fprintf(w, err.Error())
-		}
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprintf(w, string(ordersJSON))
 	}
 }
 
-//Index file
-func Index(w http.ResponseWriter, r *http.Request) {
+func sendOrders(w http.ResponseWriter, orders []byte) {
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, string(orders))
+}
+
+func sendErr(w http.ResponseWriter, err error) bool {
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, err.Error())
+		return true
+	}
+	return false
+}
+
+func GetOrderLogs(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.URL.RequestURI())
 	m, err := url.ParseQuery(r.URL.RawQuery)
 	if err != nil {

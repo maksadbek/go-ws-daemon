@@ -49,7 +49,14 @@ func sqlConnect(DSN string) (*sql.DB, error) {
 
 // GetAllActiveOrders can be used to get active orders
 // without filtration for fleets
-func GetAllActiveOrders(last int) (Order, error) {
+func GetAllActiveOrders(fleet int, last int) (Order, error) {
+	var where string
+	if fleet == 0 {
+		where = " "
+	} else {
+		where = "AND o.companies = '" + strconv.Itoa(fleet) + "'"
+	}
+
 	query :=
 		`
 		SELECT
@@ -73,9 +80,9 @@ func GetAllActiveOrders(last int) (Order, error) {
 			LEFT OUTER JOIN max_units u ON u.id = d.unit_id
 			LEFT OUTER JOIN max_users us ON us.id = o.user_id
 		WHERE
-		      o.driver_id <> 0
-		  LIMIT 0, ` + strconv.Itoa(last)
-
+		      o.driver_id <> 0 ` +
+			where +
+			` LIMIT 0, ` + strconv.Itoa(last)
 	orders := make(Order, last)
 
 	rows, err := db.Query(query)

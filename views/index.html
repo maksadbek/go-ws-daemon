@@ -99,7 +99,7 @@ var Order = React.createClass({
 });
 React.render(
         {{ $fleet := . }}
-        <OrderBox url="/orders?fleet={{ $fleet }}" pollInterval={2000} />, 
+        <OrderBox url="/active-logs?fleet={{ $fleet }}" pollInterval={2000} />, 
         document.getElementById('orders')
 );
 </script>

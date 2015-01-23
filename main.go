@@ -43,8 +43,8 @@ func main() {
 	http.Handle("/favicon.ico", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("assets"))))
 	http.HandleFunc("/active-orders", route.GetActiveOrders)
-	http.HandleFunc("/orders", route.GetLastOrders)
-	http.HandleFunc("/active-logs", route.Index)
+	http.HandleFunc("/orders", route.GetOrders)
+	http.HandleFunc("/active-logs", route.GetOrderLogs)
 
 	log.Printf("Server is running on  %s%s", config.SRV.IP, config.SRV.Port)
 	log.Fatal(http.ListenAndServe(config.SRV.IP+config.SRV.Port, nil))

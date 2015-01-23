@@ -119,9 +119,11 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 		reqType := t[0]
 		switch reqType {
 		case "logs":
+			var order ds.Fleet
+			var err error
 			if fleetOk {
 				fleetID := f[0] // Get the param from array
-				order, err := ds.GetAllOrderLogs(
+				order, err = ds.GetAllOrderLogs(
 					ds.Where{
 						Field: "taxi_fleet_id",
 						Crit:  "=",
@@ -129,13 +131,24 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 					},
 					logLimit,
 				)
-
-				if sendErr(w, err) {
-					return
-				}
-				orderJSON, err := json.Marshal(order)
-				sendOrders(w, orderJSON)
+			} else {
+				order, err = ds.GetAllOrderLogs(
+					ds.Where{
+						Field: "taxi_fleet_id",
+						Crit:  "",
+						Value: "IS NOT NULL",
+					},
+					logLimit,
+				)
 			}
+			if sendErr(w, err) {
+				return
+			}
+			orderJSON, err := json.Marshal(order)
+			if sendErr(w, err) {
+				return
+			}
+			sendOrders(w, orderJSON)
 		case "orders":
 			var orderJSON []byte
 			var err error

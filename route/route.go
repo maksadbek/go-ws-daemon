@@ -121,25 +121,28 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 		case "logs":
 			var order ds.Fleet
 			var err error
+			//if fleet is given, filter by fleet
 			if fleetOk {
 				fleetID := f[0] // Get the param from array
-				order, err = ds.GetAllOrderLogs(
-					ds.Where{
-						Field: "taxi_fleet_id",
-						Crit:  "=",
-						Value: fleetID,
-					},
-					logLimit,
-				)
-			} else {
-				order, err = ds.GetAllOrderLogs(
-					ds.Where{
-						Field: "taxi_fleet_id",
-						Crit:  "",
-						Value: "IS NOT NULL",
-					},
-					logLimit,
-				)
+				if fleetID == "" {
+					order, err = ds.GetAllOrderLogs(
+						ds.Where{
+							Field: "taxi_fleet_id",
+							Crit:  "",
+							Value: "IS NOT NULL",
+						},
+						logLimit,
+					)
+				} else {
+					order, err = ds.GetAllOrderLogs(
+						ds.Where{
+							Field: "taxi_fleet_id",
+							Crit:  "=",
+							Value: fleetID,
+						},
+						logLimit,
+					)
+				}
 			}
 			if sendErr(w, err) {
 				return
@@ -199,7 +202,7 @@ func GetOrderLogs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hash := m["hash"][0]
-	fleet := m["fleet"][0]
+	fleet, fleetOk := m["fleet"]
 
 	webSiteCookies, err := r.Cookie("PHPSESSID")
 	if err != nil {
@@ -208,7 +211,11 @@ func GetOrderLogs(w http.ResponseWriter, r *http.Request) {
 
 	if hash == webSiteCookies.Value {
 		log.Println("success")
-		t.ExecuteTemplate(w, "index", fleet)
+		if fleetOk {
+			t.ExecuteTemplate(w, "index", fleet)
+		} else {
+			t.ExecuteTemplate(w, "index", nil)
+		}
 	} else {
 		log.Println("failure")
 		fmt.Fprintf(w, "login fail")

@@ -108,7 +108,6 @@ func GetActiveOrders(w http.ResponseWriter, r *http.Request) {
 
 //GetLastOrders n orders and send in JSON
 func GetOrders(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL.RequestURI())
 	m, err := url.ParseQuery(r.URL.RawQuery)
 	sendErr(w, err)
 

@@ -1,0 +1,298 @@
+{{ define "activeOrders" }}
+{{ template "header" }}
+
+<div id="order-list" style="display: none" >
+        <div id="orders"></div>
+<div>
+<script type="text/jsx">
+
+var OrderBox = React.createClass({
+    loadOrdersFromServer: function() {
+        $.ajax({
+            url: this.props.url,
+            dataType: 'text',
+            success: function(data) {
+                this.setState({data: JSON.parse(data)});
+                $("#preloader").css("display", "none");
+                $("#order-list").css("display", "block");
+            }.bind(this),
+            error: function(xhr, status, err) {
+                console.err(this.props.url, status, err.toString());
+            }.bind(this)
+        });
+    },
+    getInitialState: function() {
+        return { data: [] };
+    },
+    componentDidMount: function() {
+        this.loadOrdersFromServer();
+        setInterval(this.loadOrdersFromServer,
+        this.props.pollInterval)
+    },
+    render: function() {
+        return (
+            <div className="orderBox">
+                <OrderList data = {this.state.data} />
+            </div>
+            );
+    }
+});
+        
+
+var OrderList = React.createClass({
+render: function() {
+    var orderNodes = this.props.data.map(function (order) {
+        var statuses= [
+        { //0
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { //1
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { //2
+            "next": true,
+            "cancel": true,
+            "activate": false
+        },
+        { //3
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { //4 <---
+            "next": true,
+            "cancel": false,
+            "activate": true
+            
+        },
+        { // 5
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { // 6
+            "next": true,
+            "cancel": false,
+            "activate": true            
+        },
+        { // 7
+            "next": true,
+            "cancel": false,
+            "activate": true
+        },
+        { // 8
+            "next": true,
+            "cancel": true,
+            "activate": false
+        },
+        { // 9
+            "next": true,
+            "cancel": true,
+            "activate": false
+        },
+        { // 10
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        { // 11
+            "next": false,
+            "cancel": false,
+            "activate": true  
+        }, 
+        { // 14
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        { //13
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        {// 14
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        { // 15
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        {// 16
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        {// 17
+            "next": false,
+            "cancel": false,
+            "activate": true
+        },
+        {// 18
+            "next": false,
+            "cancel": false,
+            "activate": true
+        }
+    ];
+    var BtnState = statuses[order.StCode]
+
+        return (
+            <Order  
+                    OrderID = {order.ID}
+                    Status = {order.Status}
+                    ClientID = {order.ClientID}
+                    AddrFrom = { order.AddrFrom}
+                    Date = {order.Date}
+                    OrderTime = {order.OrderTime}
+                    Company = {order.Companies}
+                    TariffID = {order.TariffID}
+                    ClientPhone = { order.ClientPhone }
+                    ClientName = { order.ClientName }
+                    CarNum = { order.CarNum }
+                    DriverPhone = { order.DriverPhone }
+                    UserName = {order.UserName }
+                    StCode = { order.StCode }
+                    BtnsState = { BtnState }
+                    >
+            </Order>
+        );
+    });
+
+    return(
+        <table className="hoverTable OrderList table table-bordered">
+            <tr>
+                <th>Options</th>
+                <th>Order ID</th>
+                <th>Status</th>
+                <th>Order Time</th>
+                <th>Client Phone</th>
+                <th>Car Number</th>
+                <th>Driver Phone</th>
+            </tr>
+            {orderNodes}
+        </table>
+    );
+}
+});
+
+
+var Order = React.createClass({
+    hash : "{{  . }}",
+
+    cancel: function(){
+        var cancelUrl = "/active-orders?hash=" +
+                        this.hash + 
+                        "&id=" + 
+                        this.props.OrderID + 
+                        "&cmd=cancel";
+
+        console.log(cancelUrl);
+        this.setState({
+            disabled: true
+        })
+        var btnState = this;
+        $.ajax({
+            url: cancelUrl,
+            success: function(data) {
+                btnState.setState({
+                    disabled: false
+                })
+            },
+            error: function(xhr, status, err) {
+                console.err(err.toString());
+            }
+        });
+    },
+
+    activate: function(){
+        var activateUrl = "/active-orders?hash=" +
+                            this.hash +
+                            "&id=" +
+                            this.props.OrderID +
+                            "&cmd=activate";
+        var btnState = this;
+        $.ajax({
+            url: activateUrl,
+            succes: function(data){
+                btnState.setState({
+                    disabled: false
+                })
+            },
+            error: function(xhr, status, err){
+                   console.err(err.toString());
+            }
+        });
+    },
+    toNext: function(){
+        var toNextUrl = "/active-orders?hash=" +
+                        this.hash +
+                        "&id=" +
+                        this.props.OrderID +
+                        "&status=" +
+                        this.props.StCode +
+                        "&cmd=next";
+        btnState = this;
+        $.ajax({
+            url: toNextUrl,
+            succes: function(data) {
+                btnState.setState({
+                    disabled: false
+                })
+            },
+            error: function(xhr, status, err) {
+                console.err(err.toString());
+            }
+        })
+    },
+    getInitialState: function(){
+        return {
+            disabled: false
+        }
+    },
+    render: function(){
+        var stImgURL = "/assets/img/" + this.props.StCode + ".png";
+        console.log(this);
+        return(
+        <tr>
+            <td>
+                <button onClick={this.cancel} hidden={ this.props.BtnsState.cancel} disabled={this.state.disabled}>cancel</button>
+                <button onClick={this.activate} hidden={this.props.BtnsState.activate} disabled={this.state.disabled}>activate</button>
+                <button onClick={this.toNext} hidden={this.props.BtnsState.next} disabled={this.state.disabled}>next</button>
+            </td>
+            <td className="order-id">
+                    {this.props.OrderID}
+            </td>
+            <td className="order-id">
+                <img src={stImgURL}/> <span>{this.props.Status}</span>
+            </td>
+            <td className="order-id">
+                    {this.props.OrderTime}
+            </td>
+            <td className="order-id">
+                    {this.props.ClientPhone}
+            </td>
+
+            <td className="order-id">
+                    {this.props.CarNum}
+            </td>
+            <td className="order-id">
+                    {this.props.DriverPhone}
+            </td>
+        </tr>
+        );
+    }
+});
+React.render(
+        <OrderBox url="/orders?type=orders" pollInterval={1000} />, 
+        document.getElementById('orders')
+);
+</script>
+</body>
+</html>
+{{ end }}

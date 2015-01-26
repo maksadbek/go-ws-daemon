@@ -211,7 +211,7 @@ func GetOrderLogs(w http.ResponseWriter, r *http.Request) {
 	if hash == webSiteCookies.Value {
 		log.Println("success")
 		if fleetOk {
-			t.ExecuteTemplate(w, "index", fleet)
+			t.ExecuteTemplate(w, "index", fleet[0])
 		} else {
 			t.ExecuteTemplate(w, "index", nil)
 		}

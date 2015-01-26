@@ -15,7 +15,8 @@ func Initialize(DSN string, redisPort int) (err error) {
 	if err != nil {
 		return err
 	}
-	i18n.MustLoadTranslationFile("ru-ru.all.json")
+	//i18n.MustLoadTranslationFile("ru-ru.all.json")
+	i18n.MustLoadTranslationFile("/home/maks/go-ws-daemon/ru-ru.all.json")
 	T, err = i18n.Tfunc("ru-RU")
 	return err
 }

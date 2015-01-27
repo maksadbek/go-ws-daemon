@@ -25,6 +25,7 @@ type activeOrder struct {
 	CarNum      string `db: "car_number"`
 	DriverPhone string `db: "driver_phone"`
 	StCode      int    `db: "status"`
+	ClientName  string `db: "client_name"`
 }
 
 type Where struct {
@@ -60,7 +61,9 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 				o.companies,
 				c.Mobile AS client_phone_number,
 				d.driver_phone,
-				CONCAT(u.name, ' ', u.NUMBER) AS car_number
+				CONCAT(u.name, ' ', u.NUMBER) AS car_number,
+				c.FirstName as client_name
+
 		FROM
 			max_taxi_incoming_orders o
 			LEFT OUTER JOIN max_taxi_server_clients c ON c.ClientID = o.client_id
@@ -87,6 +90,7 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 		var tmpCarNum []byte
 		var tmpDriverPhone []byte
 		var status int
+		var tmpClientName []byte
 
 		err := rows.Scan(
 			&orders[n].ID,
@@ -96,10 +100,12 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 			&tmpClientPhone,
 			&tmpCarNum,
 			&tmpDriverPhone,
+			&tmpClientName,
 		)
 		orders[n].ClientPhone = string(tmpClientPhone)
 		orders[n].CarNum = string(tmpCarNum)
 		orders[n].DriverPhone = string(tmpDriverPhone)
+		orders[n].ClientName = string(tmpClientName)
 
 		if err != nil {
 			return orders, err

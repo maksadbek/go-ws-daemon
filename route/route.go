@@ -16,18 +16,20 @@ import (
 
 var orderLimit int //SQL limit for orders
 var logLimit int   //SQL limit for daemon logs
-
+var confApp conf.App
 var t *template.Template
 
 //Initialize the templates, ds
 func Initialize(config conf.App, temp *template.Template) error {
+	log.Printf("%+v\n", config)
 	t = temp
-	err := ds.Initialize(config.DS.Mysql.DSN, config.DS.Redis.Port)
+	err := ds.Initialize(config.DS.Mysql.DSN, config.DS.Redis.Port, config.I18n.Path)
 	if err != nil {
 		return err
 	}
 	orderLimit = config.DS.Mysql.OrderLimit
 	logLimit = config.DS.Mysql.LogLimit
+	confApp = config
 	return err
 }
 
@@ -161,13 +163,27 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				order, err := ds.GetAllActiveOrders(fleet, orderLimit)
-				orderJSON, err = json.Marshal(order)
+				data := struct {
+					AttrOrder []string
+					AllOrders ds.Order
+				}{
+					confApp.Order.Attrs,
+					order,
+				}
+				orderJSON, err = json.Marshal(data)
 			} else { //if fleet is not given, do not filter
 				order, err := ds.GetAllActiveOrders(0, orderLimit)
+				data := struct {
+					AttrOrder []string
+					AllOrders ds.Order
+				}{
+					confApp.Order.Attrs,
+					order,
+				}
 				if sendErr(w, err) {
 					return
 				}
-				orderJSON, err = json.Marshal(order)
+				orderJSON, err = json.Marshal(data)
 			}
 			if sendErr(w, err) {
 				return

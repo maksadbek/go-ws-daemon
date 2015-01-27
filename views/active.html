@@ -41,6 +41,7 @@ var OrderBox = React.createClass({
 
 var OrderList = React.createClass({
 render: function() {
+    console.log(this.props.data)
     var orderNodes = this.props.data.map(function (order) {
         var statuses= [
         { //0
@@ -172,6 +173,7 @@ render: function() {
                 <th>Status</th>
                 <th>Order Time</th>
                 <th>Client Phone</th>
+                <th>Client Name</th>
                 <th>Car Number</th>
                 <th>Driver Phone</th>
             </tr>
@@ -266,7 +268,7 @@ var Order = React.createClass({
                 <button onClick={this.toNext} hidden={this.props.BtnsState.next} disabled={this.state.disabled}>next</button>
             </td>
             <td className="order-id">
-                    {this.props.OrderID}
+                    {this.props["OrderID"]}
             </td>
             <td className="order-id">
                 <img src={stImgURL}/> <span>{this.props.Status}</span>
@@ -278,6 +280,9 @@ var Order = React.createClass({
                     {this.props.ClientPhone}
             </td>
 
+            <td className="order-id">
+                    {this.props.ClientName}
+            </td>
             <td className="order-id">
                     {this.props.CarNum}
             </td>

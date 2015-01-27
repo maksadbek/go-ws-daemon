@@ -22,7 +22,7 @@ var OrderBox = React.createClass({
         });
     },
     getInitialState: function() {
-        return { data: [] };
+        return { data: {AllOrders:[], AttrOrder:[]} };
     },
     componentDidMount: function() {
         this.loadOrdersFromServer();
@@ -41,8 +41,8 @@ var OrderBox = React.createClass({
 
 var OrderList = React.createClass({
 render: function() {
-    console.log(this.props.data)
-    var orderNodes = this.props.data.map(function (order) {
+    var AttrOrders = this.props.data.AttrOrder;
+    var orderNodes = this.props.data.AllOrders.map(function (order) {
         var statuses= [
         { //0
             "next": true,
@@ -142,25 +142,16 @@ render: function() {
         }
     ];
     var BtnState = statuses[order.StCode]
-
-        return (
+    var AttrOrder = new Array();
+    for(var cols in AttrOrders) {
+        AttrOrder.push(order[AttrOrders[cols]]);
+    } 
+    return (
             <Order  
-                    OrderID = {order.ID}
-                    Status = {order.Status}
-                    ClientID = {order.ClientID}
-                    AddrFrom = { order.AddrFrom}
-                    Date = {order.Date}
-                    OrderTime = {order.OrderTime}
-                    Company = {order.Companies}
-                    TariffID = {order.TariffID}
-                    ClientPhone = { order.ClientPhone }
-                    ClientName = { order.ClientName }
-                    CarNum = { order.CarNum }
-                    DriverPhone = { order.DriverPhone }
-                    UserName = {order.UserName }
-                    StCode = { order.StCode }
-                    BtnsState = { BtnState }
-                    >
+                AttrOrder = {AttrOrder}
+                Options = {BtnState} 
+                StCode = {order.StCode}
+                OrderID = {order.ID}>
             </Order>
         );
     });
@@ -169,13 +160,13 @@ render: function() {
         <table className="hoverTable OrderList table table-bordered">
             <tr>
                 <th>Options</th>
-                <th>Order ID</th>
-                <th>Status</th>
-                <th>Order Time</th>
-                <th>Client Phone</th>
-                <th>Client Name</th>
-                <th>Car Number</th>
-                <th>Driver Phone</th>
+                <th>{AttrOrders.shift()}</th>
+                <th>{AttrOrders.shift()}</th>
+                <th>{AttrOrders.shift()}</th>
+                <th>{AttrOrders.shift()}</th>
+                <th>{AttrOrders.shift()}</th>
+                <th>{AttrOrders.shift()}</th>
+                <th>{AttrOrders.shift()}</th>
             </tr>
             {orderNodes}
         </table>
@@ -259,42 +250,51 @@ var Order = React.createClass({
     },
     render: function(){
         var stImgURL = "/assets/img/" + this.props.StCode + ".png";
-        console.log(this);
+        /*
+        CarNum: "998911377816"
+        ClientName: "Без номера"
+        ClientPhone: "998000000000"
+        Companies: "202"
+        DriverPhone: "Red Poll"
+        ID: 1222296
+        OrderTime: "14 01 2015 at 10:27"
+        StCode: 7
+        Status: "Заказ выполнен"
+        */
         return(
         <tr>
             <td>
-                <button onClick={this.cancel} hidden={ this.props.BtnsState.cancel} disabled={this.state.disabled}>cancel</button>
-                <button onClick={this.activate} hidden={this.props.BtnsState.activate} disabled={this.state.disabled}>activate</button>
-                <button onClick={this.toNext} hidden={this.props.BtnsState.next} disabled={this.state.disabled}>next</button>
+                <button onClick={this.cancel} hidden={ this.props.Options.cancel} disabled={this.state.disabled}>cancel</button>
+                <button onClick={this.activate} hidden={this.props.Options.activate} disabled={this.state.disabled}>activate</button>
+                <button onClick={this.toNext} hidden={this.props.Options.next} disabled={this.state.disabled}>next</button>
             </td>
             <td className="order-id">
-                    {this.props["OrderID"]}
+                    {this.props.AttrOrder.shift()}
             </td>
             <td className="order-id">
-                <img src={stImgURL}/> <span>{this.props.Status}</span>
+                <img src={stImgURL}/> <span>{this.props.AttrOrder.shift()}</span>
             </td>
             <td className="order-id">
-                    {this.props.OrderTime}
+                    {this.props.AttrOrder.shift()}
             </td>
             <td className="order-id">
-                    {this.props.ClientPhone}
-            </td>
-
-            <td className="order-id">
-                    {this.props.ClientName}
+                    {this.props.AttrOrder.shift()}
             </td>
             <td className="order-id">
-                    {this.props.CarNum}
+                    {this.props.AttrOrder.shift()}
             </td>
             <td className="order-id">
-                    {this.props.DriverPhone}
+                    {this.props.AttrOrder.shift()}
+            </td>
+            <td className="order-id">
+                    {this.props.AttrOrder.shift()}
             </td>
         </tr>
         );
     }
 });
 React.render(
-        <OrderBox url="/orders?type=orders" pollInterval={1000} />, 
+        <OrderBox url="/orders?type=orders" pollInterval={5000} />, 
         document.getElementById('orders')
 );
 </script>

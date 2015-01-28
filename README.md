@@ -62,3 +62,10 @@ SELECT
     (o.driver_id = 0 AND companies like '%202%'))
     LIMIT 0,10
 ```
+
+###GET /active-orders?fleet=<FLEET_NUMBER>&hash=<HASH_FROM_PHPSESSID>###
+####returns orders by fleet number####
+###GET /active-orders?hash=<HASH_FROM_PHPSESSID>###
+####returns all orders not filtered by fleet number####
+
+###GET /active-logs?fleet=<FLEET_

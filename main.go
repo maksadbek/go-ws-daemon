@@ -15,13 +15,41 @@ import (
 
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 	"syscall"
 )
 
 func main() {
+	//write pid into file
+	f, err := os.Create("/var/run/go-ws-daemon.pid")
+	if err != nil {
+		panic(err)
+	}
+	pid := os.Getpid()
+	b := []byte(strconv.Itoa(pid))
+	_, err = f.Write([]byte(b))
+	if err != nil {
+		panic(err)
+	}
+	f.Close()
+	//
+
 	confPath := flag.String("conf", "config.toml", "configuration file")
 	viewsPath := flag.String("views", "views", "views folder")
+	gracefulChild := flag.Bool("graceful", false, "listen on fd open 3")
+	flag.Parse()
+	log.Println(*confPath)
+	log.Println(*viewsPath)
+	log.Println(*gracefulChild)
+	//TCP listener
+	var listener net.Listener
+	//Channels
+	sig := make(chan os.Signal)
+	restart := make(chan bool)
+	done := make(chan bool)
+
+	log.Println(*confPath)
 	d, err := ioutil.ReadFile(*confPath)
 	if err != nil {
 		log.Fatal(err)
@@ -34,6 +62,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//template files
 	t, err := template.ParseFiles(
 		*viewsPath+"/index.html",
 		*viewsPath+"/header.html",
@@ -43,19 +72,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	//initialize config into route
 	route.Initialize(config, t)
-
-	server := &http.Server{Handler: webHandler()}
-	var listener net.Listener
-
-	// start the server
-	var gracefulChild bool
-	flag.BoolVar(&gracefulChild, "graceful", false, "listen on fd open 3")
-	flag.Parse()
 
 	//if gracefulchild flag is set
 	// terminate the parent and start child process
-	if gracefulChild {
+	if *gracefulChild {
 		//terminating parent
 		parent := syscall.Getppid()
 		log.Printf("main: killing parent pid : %v", parent)
@@ -71,25 +93,28 @@ func main() {
 		log.Println("main: listening on a new file descriptor")
 	}
 
+	//setup server handlers
+	server := &http.Server{Handler: webHandler()}
+	//start server
 	go func() {
 		server.Serve(listener)
 	}()
-	log.Println(">>>>>>>>>>>>>>>>>>>>>>>..")
+	log.Println("server is running on", config.SRV.IP, config.SRV.Port)
 
-	sig := make(chan os.Signal)
-	restart := make(chan bool)
-	done := make(chan bool)
-
+	//catch only term and hup signals
 	signal.Notify(sig, syscall.SIGTERM, syscall.SIGHUP)
 
+	//catch signals in infinite loop
 	go func(sign chan os.Signal) {
 		for {
 			select {
 			case s := <-sign:
+				//if signal is term, then terminate the program
 				if s == syscall.SIGTERM {
 					log.Println("SIGTERM")
 					done <- true
 					break
+					// if signal is hup, restart the program
 				} else if s == syscall.SIGHUP {
 					log.Println("SIGHUP")
 					restart <- true
@@ -99,11 +124,12 @@ func main() {
 		}
 	}(sig)
 
+	// if restart channel is active, then create fork and terminate parent
 	go func() {
 		<-restart
 		listener.Close()
 		log.Println("restarting")
-		//geting path of the file
+		//get the path of executive file
 		absPath, err := filepath.Abs(filepath.Dir(os.Args[0]))
 		log.Println(absPath)
 

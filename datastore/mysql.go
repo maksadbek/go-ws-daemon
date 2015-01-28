@@ -14,17 +14,20 @@ type orderLog struct {
 	Name       string
 	CarNum     string
 	StCode     int
+	//	ClientName string
+	//	Mobile     string
 }
 
 type activeOrder struct {
 	ID          int `db: "id"`
 	Status      string
 	OrderTime   string `db: "time_order"`
-	Companies   string `db: "comanies"`
+	Companies   string
 	ClientPhone string `db: "client_phone_number`
 	CarNum      string `db: "car_number"`
 	DriverPhone string `db: "driver_phone"`
 	StCode      int    `db: "status"`
+	ClientName  string `db: "client_name"`
 }
 
 type Where struct {
@@ -60,7 +63,9 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 				o.companies,
 				c.Mobile AS client_phone_number,
 				d.driver_phone,
-				CONCAT(u.name, ' ', u.NUMBER) AS car_number
+				CONCAT(u.name, ' ', u.NUMBER) AS car_number,
+				c.FirstName as client_name
+
 		FROM
 			max_taxi_incoming_orders o
 			LEFT OUTER JOIN max_taxi_server_clients c ON c.ClientID = o.client_id
@@ -87,19 +92,23 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 		var tmpCarNum []byte
 		var tmpDriverPhone []byte
 		var status int
+		var tmpClientName []byte
+		var tmpCompanies string
 
 		err := rows.Scan(
 			&orders[n].ID,
 			&status,
 			&tmpOrderTime,
-			&orders[n].Companies,
+			&tmpCompanies,
 			&tmpClientPhone,
 			&tmpCarNum,
 			&tmpDriverPhone,
+			&tmpClientName,
 		)
 		orders[n].ClientPhone = string(tmpClientPhone)
 		orders[n].CarNum = string(tmpCarNum)
 		orders[n].DriverPhone = string(tmpDriverPhone)
+		orders[n].ClientName = string(tmpClientName)
 
 		if err != nil {
 			return orders, err
@@ -110,8 +119,8 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 		} else {
 			orders[n].OrderTime = ""
 		}
-
 		orders[n].Status = T(strconv.Itoa(status))
+		orders[n].Companies = tmpCompanies
 		orders[n].StCode = status
 
 		n += 1
@@ -136,6 +145,7 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		where.Value +
 		` ORDER BY l.id DESC 
 				LIMIT 0, ? `
+
 	rows, err := db.Query(getALLquery, last)
 	fleet := make(Fleet, last)
 	if err != nil {

@@ -1,0 +1,34 @@
+[
+    {
+        "id": "options",
+        "translation": "Options"
+    },
+    {
+        "id": "orderID",
+        "translation": "Order ID"
+    },
+    {
+        "id": "status",
+        "translation": "Status" 
+    },
+    {
+        "id": "orderTime",
+        "translation": "Order Time" 
+    },
+    {
+        "id": "clientPhone",
+        "translation": "Client Phone"
+    },
+    {
+        "id": "clientName",
+        "translation": "Client Name"
+    },
+    {
+        "id": "carNumber",
+        "translation": "Car Number"
+    },
+    {
+        "id": "driverPhone",
+        "translation": "Driver Phone"
+    }
+]

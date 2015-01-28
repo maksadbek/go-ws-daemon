@@ -22,10 +22,24 @@ type Server struct {
 	IP   string
 	Port string
 }
+type I18n struct {
+	Path string
+}
 
 type App struct {
-	DS  Datastore
-	SRV Server
+	DS    Datastore
+	SRV   Server
+	I18n  I18n
+	Order Order
+	Log Log
+}
+
+type Order struct {
+	Attrs []string
+}
+
+type Log struct {
+	Attrs []string
 }
 
 func Read(r io.Reader) (config App, err error) {

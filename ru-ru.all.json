@@ -90,5 +90,13 @@
     {
         "id": "-2",
         "translation": "Клиент оповещен"
+    },
+    {
+        "id": "22",
+        "translation": "newmax"
+    },
+    {
+        "id": "fleet_202,203,436,604,673,674,675,676",
+        "translation": "allfleet"
     }
 ]

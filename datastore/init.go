@@ -9,14 +9,13 @@ import (
 var db *sql.DB
 var T i18n.TranslateFunc
 
-func Initialize(DSN string, redisPort int) (err error) {
+func Initialize(DSN string, redisPort int, i18nPath string) (err error) {
 	//connect to sql db
 	db, err = sqlConnect(DSN)
 	if err != nil {
 		return err
 	}
-	//i18n.MustLoadTranslationFile("ru-ru.all.json")
-	i18n.MustLoadTranslationFile("/home/maks/go-ws-daemon/ru-ru.all.json")
+	i18n.MustLoadTranslationFile(i18nPath)
 	T, err = i18n.Tfunc("ru-RU")
 	return err
 }

@@ -1,8 +1,8 @@
 [ds]
     [ds.mysql]
-		dsn = "root:zqwW4XYLzNwN3Dsa@tcp(54.72.185.137:3306)/test?parseTime=true"
+		dsn = "mytaxiuser:asldgqwukygdsalk@tcp(mytaxi.clj4txt8rssy.eu-west-1.rds.amazonaws.com:3306)/test?parseTime=true"
 		LogLimit = 100
-        OrderLimit = 40
+        OrderLimit = 150
 	[ds.redis]
 		port = 6379
 		chan = "orders"

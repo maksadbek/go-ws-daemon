@@ -42,6 +42,8 @@ var OrderBox = React.createClass({
 var OrderList = React.createClass({
 render: function() {
     var AttrOrders = this.props.data.AttrOrder;
+    var StatusIndex = 0
+
     var orderNodes = this.props.data.AllOrders.map(function (order) {
         var statuses= [
         { //0
@@ -142,9 +144,9 @@ render: function() {
         }
     ];
     var BtnState = statuses[order.StCode]
-    var AttrOrder = new Array();
+    var AttrOrder = new Object();
     for(var cols in AttrOrders) {
-        AttrOrder.push(order[AttrOrders[cols]]);
+        AttrOrder[AttrOrders[cols]] = order[AttrOrders[cols]];
     } 
     return (
             <Order  
@@ -157,16 +159,12 @@ render: function() {
     });
 
     return(
-        <table className="hoverTable OrderList table table-bordered">
+        <table statusCol={StatusIndex} className="hoverTable OrderList table table-bordered">
             <tr>
                 <th>Options</th>
-                <th>{AttrOrders.shift()}</th>
-                <th>{AttrOrders.shift()}</th>
-                <th>{AttrOrders.shift()}</th>
-                <th>{AttrOrders.shift()}</th>
-                <th>{AttrOrders.shift()}</th>
-                <th>{AttrOrders.shift()}</th>
-                <th>{AttrOrders.shift()}</th>
+                { AttrOrders.map(function(header, index) {
+                    return (<th>{header}</th>);
+                }) }
             </tr>
             {orderNodes}
         </table>
@@ -261,6 +259,7 @@ var Order = React.createClass({
         StCode: 7
         Status: "Заказ выполнен"
         */
+        var AttrOrder = this.props.AttrOrder;
         return(
         <tr>
             <td>
@@ -268,27 +267,15 @@ var Order = React.createClass({
                 <button onClick={this.activate} hidden={this.props.Options.activate} disabled={this.state.disabled}>activate</button>
                 <button onClick={this.toNext} hidden={this.props.Options.next} disabled={this.state.disabled}>next</button>
             </td>
-            <td className="order-id">
-                    {this.props.AttrOrder.shift()}
-            </td>
-            <td className="order-id">
-                <img src={stImgURL}/> <span>{this.props.AttrOrder.shift()}</span>
-            </td>
-            <td className="order-id">
-                    {this.props.AttrOrder.shift()}
-            </td>
-            <td className="order-id">
-                    {this.props.AttrOrder.shift()}
-            </td>
-            <td className="order-id">
-                    {this.props.AttrOrder.shift()}
-            </td>
-            <td className="order-id">
-                    {this.props.AttrOrder.shift()}
-            </td>
-            <td className="order-id">
-                    {this.props.AttrOrder.shift()}
-            </td>
+            { 
+                Object.keys(this.props.AttrOrder).map(function(value, index){
+                    if (value === "Status") {
+                        return (<td className="order-id"><img src={stImgURL}/>   <span>{AttrOrder[value]}</span></td>);
+                    }
+                    return (<td className="order-id">{AttrOrder[value]}</td>)                    
+                })
+            }
+            
         </tr>
         );
     }

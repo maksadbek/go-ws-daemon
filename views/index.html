@@ -49,6 +49,7 @@ render: function() {
                     InsertDate = {order.InsertDate}
                     CarNum = {order.CarNum}
                     Name = {order.Name}
+                    ClientPhone = { order.ClientPhone}
                     StCode = {order.StCode}
                     >
             </Order>
@@ -61,7 +62,9 @@ render: function() {
                 <th>Order ID</th>
                 <th>Insert Date</th>
                 <th>Status</th>
-                <th>Name</th>
+                <th>Driver Name</th>
+                <th>Client Name</th>
+                <th>Client Phone</th>
                 <th>Car Number</th>
             </tr>
             {orderNodes}
@@ -90,6 +93,9 @@ var Order = React.createClass({
             <td className="order-id">
                     {this.props.Name}
             </td>
+            <td classNAme="order-id">
+                    {this.props.clientPhone}
+            </td>
             <td className="order-id">
                     {this.props.CarNum}
             </td>
@@ -98,8 +104,8 @@ var Order = React.createClass({
     }
 });
 React.render(
-        {{ $fleet := . }}
-        <OrderBox url="/orders?type=logs&fleet={{ $fleet }}" pollInterval={2000} />, 
+        
+        <OrderBox url={"/orders?type=logs&fleet="+ {{ .}} }pollInterval={2000} />, 
         document.getElementById('orders')
 );
 </script>

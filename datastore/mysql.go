@@ -3,7 +3,7 @@ package datastore
 import (
 	"database/sql"
 	"strconv"
-
+	"log"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -14,6 +14,8 @@ type orderLog struct {
 	Name       string
 	CarNum     string
 	StCode     int
+	ClientName string
+	Mobile		string
 }
 
 type activeOrder struct {
@@ -132,9 +134,11 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 				l.date_insert as data_insert, 
 				l.status as status, 
 				u.number as carNum,
-				d.driver_name as driverName
-				FROM max_taxi_deamon_log l, max_drivers d, max_units u
-				WHERE u.id = d.unit_id and l.unit_id = u.id and l.` +
+				d.driver_name as driverName,
+				cl.FirstName,
+				cl.Mobile
+				FROM max_taxi_deamon_log l, max_drivers d, max_units u, max_taxi_server_clients cl, max_taxi_incoming_orders io
+				WHERE u.id = d.unit_id and l.unit_id = u.id and io.client_id = cl.ClientID and l.` +
 		where.Field +
 		` ` +
 		where.Crit +
@@ -142,6 +146,8 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		where.Value +
 		` ORDER BY l.id DESC 
 				LIMIT 0, ? `
+					log.Println(getALLquery)
+
 	rows, err := db.Query(getALLquery, last)
 	fleet := make(Fleet, last)
 	if err != nil {
@@ -160,6 +166,8 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 			&status,
 			&fleet[n].CarNum,
 			&fleet[n].Name,
+			&fleet[n].ClientName,
+			&fleet[n].Mobile,
 		)
 		if err != nil {
 			return fleet, err

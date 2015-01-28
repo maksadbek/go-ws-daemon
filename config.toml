@@ -12,5 +12,5 @@
 [i18n]
     path = "/etc/go-ws-daemon/ru-ru.all.json"
 [order]
-    attrs=["ClientName","Status","ID","ClientPhone","Companies", "DriverPhone","OrderTime"]
+    attrs=["ID", "Status", "ClientName","ClientPhone","Companies", "DriverPhone","OrderTime"]
 

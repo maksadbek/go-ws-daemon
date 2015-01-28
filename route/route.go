@@ -145,10 +145,17 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 					)
 				}
 			}
+			data := struct {
+				AttrOrder []string
+				AllOrders ds.Fleet
+			}{
+				confApp.Log.Attrs,
+				order,
+			}
 			if sendErr(w, err) {
 				return
 			}
-			orderJSON, err := json.Marshal(order)
+			orderJSON, err := json.Marshal(data)
 			if sendErr(w, err) {
 				return
 			}

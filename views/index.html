@@ -22,7 +22,7 @@ var OrderBox = React.createClass({
         });
     },
     getInitialState: function() {
-        return { data: [] };
+        return { data: {AllOrders: [], AttrOrder: [] }};
     },
     componentDidMount: function() {
         this.loadOrdersFromServer();
@@ -41,31 +41,53 @@ var OrderBox = React.createClass({
 
 var OrderList = React.createClass({
 render: function() {
-    var orderNodes = this.props.data.map(function (order) {
-        return (
-            <Order  
-                    OrderID = {order.OrderID}
-                    Status = {order.Status}
-                    InsertDate = {order.InsertDate}
-                    CarNum = {order.CarNum}
-                    Name = {order.Name}
-                    ClientPhone = { order.ClientPhone}
-                    StCode = {order.StCode}
-                    >
-            </Order>
+    //Column Headers
+    var ColHeaders = {
+        "OrderID": "Order ID",
+        "Status": "Status",
+        "InsertDate": "Time", 
+        "CarNum": "Car Number",
+        "Name": "Driver Name",
+        "ClientPhone": "Client Phone",
+        "Mobile": "Client Phone",
+        "ClientName": "Client Name",
+        "DriverPhone": "Driver Phone"
+    }
+    
+    
+    /*
+        OrderID = {order.OrderID}
+        Status = {order.Status}
+        InsertDate = {order.InsertDate}
+        CarNum = {order.CarNum}
+        Name = {order.Name}
+        ClientPhone = { order.ClientPhone}
+        StCode = {order.StCode}
+    */
+    var AttrOrders = this.props.data.AttrOrder;
+    var orderNodes = this.props.data.AllOrders.map(function (order) {
+    var AttrOrder = new Object();
+
+    for(var cols in AttrOrders) {
+        AttrOrder[AttrOrders[cols]] = order[AttrOrders[cols]];
+    };
+
+    return (
+        <Order  
+                AttrOrder = {AttrOrder}
+                OrderID = {order.ID}
+                StCode = {order.StCode}
+                >
+        </Order>
         );
     });
 
     return(
         <table className="hoverTable OrderList table table-bordered">
             <tr>
-                <th>Order ID</th>
-                <th>Insert Date</th>
-                <th>Status</th>
-                <th>Driver Name</th>
-                <th>Client Name</th>
-                <th>Client Phone</th>
-                <th>Car Number</th>
+                { AttrOrders.map(function(header, index) {
+                    return (<th>{ColHeaders[header]}</th>);
+                }) }
             </tr>
             {orderNodes}
         </table>
@@ -79,26 +101,17 @@ var Order = React.createClass({
         var stImgURL = "/assets/img/" + 
                         this.props.StCode +
                         ".png";
+        var AttrOrder = this.props.AttrOrder;
         return(
         <tr>
-            <td className="order-id">
-                    {this.props.OrderID}
-            </td>
-            <td className="order-id">
-                    {this.props.InsertDate}
-            </td>
-            <td className="order-id">
-                    <img src={stImgURL}/> <span>{this.props.Status}</span>
-            </td>
-            <td className="order-id">
-                    {this.props.Name}
-            </td>
-            <td classNAme="order-id">
-                    {this.props.clientPhone}
-            </td>
-            <td className="order-id">
-                    {this.props.CarNum}
-            </td>
+             { 
+            Object.keys(this.props.AttrOrder).map(function(value, index){
+                if (value === "Status") {
+                    return (<td className="order-id"><img src={stImgURL}/>   <span>{AttrOrder[value]}</span></td>);
+                }
+                return (<td className="order-id">{AttrOrder[value]}</td>)                    
+            })
+            }        
         </tr>
         );
     }

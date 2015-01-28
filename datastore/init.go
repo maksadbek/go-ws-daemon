@@ -15,7 +15,6 @@ func Initialize(DSN string, redisPort int, i18nPath string) (err error) {
 	if err != nil {
 		return err
 	}
-	//i18n.MustLoadTranslationFile("ru-ru.all.json")
 	i18n.MustLoadTranslationFile(i18nPath)
 	T, err = i18n.Tfunc("ru-RU")
 	return err

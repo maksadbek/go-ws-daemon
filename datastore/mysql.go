@@ -2,9 +2,9 @@ package datastore
 
 import (
 	"database/sql"
-	"strconv"
-	"log"
 	"github.com/go-sql-driver/mysql"
+	"log"
+	"strconv"
 )
 
 type orderLog struct {
@@ -14,15 +14,15 @@ type orderLog struct {
 	Name       string
 	CarNum     string
 	StCode     int
-	ClientName string
-	Mobile		string
+//	ClientName string
+//	Mobile     string
 }
 
 type activeOrder struct {
 	ID          int `db: "id"`
 	Status      string
 	OrderTime   string `db: "time_order"`
-	Companies   string `db: "comanies"`
+	Companies   string
 	ClientPhone string `db: "client_phone_number`
 	CarNum      string `db: "car_number"`
 	DriverPhone string `db: "driver_phone"`
@@ -93,12 +93,13 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 		var tmpDriverPhone []byte
 		var status int
 		var tmpClientName []byte
+		var tmpCompanies string
 
 		err := rows.Scan(
 			&orders[n].ID,
 			&status,
 			&tmpOrderTime,
-			&orders[n].Companies,
+			&tmpCompanies,
 			&tmpClientPhone,
 			&tmpCarNum,
 			&tmpDriverPhone,
@@ -118,8 +119,8 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 		} else {
 			orders[n].OrderTime = ""
 		}
-
 		orders[n].Status = T(strconv.Itoa(status))
+		orders[n].Companies = tmpCompanies
 		orders[n].StCode = status
 
 		n += 1
@@ -128,17 +129,15 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 }
 
 func GetAllOrderLogs(where Where, last int) (Fleet, error) {
-	getALLquery := ` 
+		getALLquery := ` 
 			SELECT 
 				l.order_id as order_id, 
 				l.date_insert as data_insert, 
 				l.status as status, 
 				u.number as carNum,
-				d.driver_name as driverName,
-				cl.FirstName,
-				cl.Mobile
-				FROM max_taxi_deamon_log l, max_drivers d, max_units u, max_taxi_server_clients cl, max_taxi_incoming_orders io
-				WHERE u.id = d.unit_id and l.unit_id = u.id and io.client_id = cl.ClientID and l.` +
+				d.driver_name as driverName
+				FROM max_taxi_deamon_log l, max_drivers d, max_units u
+				WHERE u.id = d.unit_id and l.unit_id = u.id and l.` +
 		where.Field +
 		` ` +
 		where.Crit +
@@ -146,7 +145,8 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		where.Value +
 		` ORDER BY l.id DESC 
 				LIMIT 0, ? `
-					log.Println(getALLquery)
+
+	log.Println(getALLquery)
 
 	rows, err := db.Query(getALLquery, last)
 	fleet := make(Fleet, last)
@@ -166,8 +166,6 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 			&status,
 			&fleet[n].CarNum,
 			&fleet[n].Name,
-			&fleet[n].ClientName,
-			&fleet[n].Mobile,
 		)
 		if err != nil {
 			return fleet, err

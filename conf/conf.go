@@ -31,9 +31,14 @@ type App struct {
 	SRV   Server
 	I18n  I18n
 	Order Order
+	Log Log
 }
 
 type Order struct {
+	Attrs []string
+}
+
+type Log struct {
 	Attrs []string
 }
 

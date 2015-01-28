@@ -41,6 +41,19 @@ var OrderBox = React.createClass({
 
 var OrderList = React.createClass({
 render: function() {
+    //Column Headers
+    var ColHeaders = {
+            "Options": "Options",
+            "ID": "Order ID",
+            "Status": "Status",
+            "OrderTime": "Order Time", 
+            "ClientPhone": "Client Phone",
+            "ClientName": "Client Name",
+            "CarNumber": "Car Number",
+            "DriverPhone": "Driver Phone",
+            "Companies":"Company"
+        };
+
     var AttrOrders = this.props.data.AttrOrder;
     var StatusIndex = 0
 
@@ -163,7 +176,7 @@ render: function() {
             <tr>
                 <th>Options</th>
                 { AttrOrders.map(function(header, index) {
-                    return (<th>{header}</th>);
+                    return (<th>{ColHeaders[header]}</th>);
                 }) }
             </tr>
             {orderNodes}

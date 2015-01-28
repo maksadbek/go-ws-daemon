@@ -16,18 +16,20 @@ import (
 
 var orderLimit int //SQL limit for orders
 var logLimit int   //SQL limit for daemon logs
-
+var confApp conf.App
 var t *template.Template
 
 //Initialize the templates, ds
 func Initialize(config conf.App, temp *template.Template) error {
+	log.Printf("%+v\n", config)
 	t = temp
-	err := ds.Initialize(config.DS.Mysql.DSN, config.DS.Redis.Port)
+	err := ds.Initialize(config.DS.Mysql.DSN, config.DS.Redis.Port, config.I18n.Path)
 	if err != nil {
 		return err
 	}
 	orderLimit = config.DS.Mysql.OrderLimit
 	logLimit = config.DS.Mysql.LogLimit
+	confApp = config
 	return err
 }
 
@@ -120,33 +122,34 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 		case "logs":
 			var order ds.Fleet
 			var err error
+			var wh ds.Where
 			//if fleet is given, filter by fleet
-			if fleetOk {
-				fleetID := f[0] // Get the param from array
-				if fleetID == "" {
-					order, err = ds.GetAllOrderLogs(
-						ds.Where{
-							Field: "taxi_fleet_id",
-							Crit:  "",
-							Value: "IS NOT NULL",
-						},
-						logLimit,
-					)
-				} else {
-					order, err = ds.GetAllOrderLogs(
-						ds.Where{
-							Field: "taxi_fleet_id",
-							Crit:  "=",
-							Value: fleetID,
-						},
-						logLimit,
-					)
+			if !fleetOk {
+				wh = ds.Where{
+					Field: "taxi_fleet_id",
+					Crit:  "",
+					Value: "IS NOT NULL",
 				}
+					
+				} else {
+					wh = ds.Where{
+						Field: "taxi_fleet_id",
+						Crit:  "=",
+						Value: f[0],
+						}
+				}
+			order, err = ds.GetAllOrderLogs(wh, logLimit)
+			data := struct {
+				AttrOrder []string
+				AllOrders ds.Fleet
+			}{
+				confApp.Log.Attrs,
+				order,
 			}
 			if sendErr(w, err) {
 				return
 			}
-			orderJSON, err := json.Marshal(order)
+			orderJSON, err := json.Marshal(data)
 			if sendErr(w, err) {
 				return
 			}
@@ -161,13 +164,27 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 					return
 				}
 				order, err := ds.GetAllActiveOrders(fleet, orderLimit)
-				orderJSON, err = json.Marshal(order)
+				data := struct {
+					AttrOrder []string
+					AllOrders ds.Order
+				}{
+					confApp.Order.Attrs,
+					order,
+				}
+				orderJSON, err = json.Marshal(data)
 			} else { //if fleet is not given, do not filter
 				order, err := ds.GetAllActiveOrders(0, orderLimit)
+				data := struct {
+					AttrOrder []string
+					AllOrders ds.Order
+				}{
+					confApp.Order.Attrs,
+					order,
+				}
 				if sendErr(w, err) {
 					return
 				}
-				orderJSON, err = json.Marshal(order)
+				orderJSON, err = json.Marshal(data)
 			}
 			if sendErr(w, err) {
 				return
@@ -213,7 +230,7 @@ func GetOrderLogs(w http.ResponseWriter, r *http.Request) {
 		if fleetOk {
 			t.ExecuteTemplate(w, "index", fleet[0])
 		} else {
-			t.ExecuteTemplate(w, "index", nil)
+			t.ExecuteTemplate(w, "index", "none")
 		}
 	} else {
 		log.Println("failure")

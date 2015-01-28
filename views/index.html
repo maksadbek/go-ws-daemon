@@ -117,8 +117,13 @@ var Order = React.createClass({
     }
 });
 React.render(
-        
-        <OrderBox url={"/orders?type=logs&fleet="+ {{ .}} }pollInterval={2000} />, 
+        <OrderBox url={
+        {{ if ne . "none" }}
+            "/orders?type=logs&fleet=" + {{ . }}} 
+        {{ else }}
+            "/orders?type=logs"}
+        {{ end }}
+        pollInterval={2000} />, 
         document.getElementById('orders')
 );
 </script>

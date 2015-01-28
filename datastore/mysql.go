@@ -2,9 +2,9 @@ package datastore
 
 import (
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
-	"log"
 	"strconv"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 type orderLog struct {
@@ -14,8 +14,8 @@ type orderLog struct {
 	Name       string
 	CarNum     string
 	StCode     int
-//	ClientName string
-//	Mobile     string
+	//	ClientName string
+	//	Mobile     string
 }
 
 type activeOrder struct {
@@ -129,7 +129,7 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 }
 
 func GetAllOrderLogs(where Where, last int) (Fleet, error) {
-		getALLquery := ` 
+	getALLquery := ` 
 			SELECT 
 				l.order_id as order_id, 
 				l.date_insert as data_insert, 
@@ -145,8 +145,6 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		where.Value +
 		` ORDER BY l.id DESC 
 				LIMIT 0, ? `
-
-	log.Println(getALLquery)
 
 	rows, err := db.Query(getALLquery, last)
 	fleet := make(Fleet, last)

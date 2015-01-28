@@ -122,29 +122,23 @@ func GetOrders(w http.ResponseWriter, r *http.Request) {
 		case "logs":
 			var order ds.Fleet
 			var err error
+			var wh ds.Where
 			//if fleet is given, filter by fleet
-			if fleetOk {
-				fleetID := f[0] // Get the param from array
-				if fleetID == "" {
-					order, err = ds.GetAllOrderLogs(
-						ds.Where{
-							Field: "taxi_fleet_id",
-							Crit:  "",
-							Value: "IS NOT NULL",
-						},
-						logLimit,
-					)
-				} else {
-					order, err = ds.GetAllOrderLogs(
-						ds.Where{
-							Field: "taxi_fleet_id",
-							Crit:  "=",
-							Value: fleetID,
-						},
-						logLimit,
-					)
+			if !fleetOk {
+				wh = ds.Where{
+					Field: "taxi_fleet_id",
+					Crit:  "",
+					Value: "IS NOT NULL",
 				}
-			}
+					
+				} else {
+					wh = ds.Where{
+						Field: "taxi_fleet_id",
+						Crit:  "=",
+						Value: f[0],
+						}
+				}
+			order, err = ds.GetAllOrderLogs(wh, logLimit)
 			data := struct {
 				AttrOrder []string
 				AllOrders ds.Fleet
@@ -236,7 +230,7 @@ func GetOrderLogs(w http.ResponseWriter, r *http.Request) {
 		if fleetOk {
 			t.ExecuteTemplate(w, "index", fleet[0])
 		} else {
-			t.ExecuteTemplate(w, "index", nil)
+			t.ExecuteTemplate(w, "index", "none")
 		}
 	} else {
 		log.Println("failure")

@@ -44,7 +44,7 @@ SCRIPTNAME=/etc/init.d/$NAME
 #
 do_start()
 {
-	start-stop-daemon --start --quiet --exec $DAEMON -- $DAEMON_ARGS > /dev/null &
+	nohup $DAEMON &
 }
 
 #

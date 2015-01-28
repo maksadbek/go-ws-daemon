@@ -1,0 +1,17 @@
+[ds]
+    [ds.mysql]
+		dsn = "mytaxiuser:asldgqwukygdsalk@tcp(mytaxi.clj4txt8rssy.eu-west-1.rds.amazonaws.com:3306)/test?parseTime=true"
+		LogLimit = 100
+		OrderLimit = 150
+	[ds.redis]
+		port = 6379
+		chan = "orders"
+[srv]
+    ip = "0.0.0.0:"
+	port = "8001"
+[i18n]
+    path = "/var/www/go-ws-daemon/ru-ru.all.json"
+[order]
+    attrs=["ID", "Status", "ClientName","ClientPhone","Companies", "DriverPhone","OrderTime"]
+[log]
+    attrs=["OrderID", "Status", "ClientName","ClientPhone","Name", "CarNum","DriverPhone","InsertDate"]

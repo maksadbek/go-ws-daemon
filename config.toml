@@ -10,7 +10,7 @@
     ip = "0.0.0.0:"
 	port = "8001"
 [i18n]
-    path = "/var/www/go-ws-daemon/ru-ru.all.json"
+    path = "ru-ru.all.json"
 [order]
     attrs=["ID", "Status", "ClientName","ClientPhone","Companies", "DriverPhone","OrderTime"]
 [log]

@@ -15,6 +15,7 @@ type orderLog struct {
 	CarNum     string
 	StCode     int
 	ClientName string
+	DriverPhone string
 	ClientPhone     string
 }
 
@@ -135,6 +136,7 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 				status, 
 				carNum, 
 				driverName,
+				driver_phone,
 		        SUBSTRING_INDEX(Name_Mobile, ':>', -1) Mobile,
 		        SUBSTRING_INDEX(Name_Mobile, ':>',  1) FirstName
 		FROM (
@@ -145,10 +147,14 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		     FROM max_units u 
 		     WHERE u.id = l.unit_id
 		     ) as carNum,
-		    (SELECT d.driver_name 
+		    (SELECT d.driver_name
 		    FROM max_drivers d 
 		    WHERE d.unit_id = l.unit_id
 			LIMIT 1) as driverName,
+		    (SELECT d.driver_phone
+		    FROM max_drivers d 
+		    WHERE d.unit_id = l.unit_id
+			LIMIT 1) as driver_phone,
 		    (SELECT CONCAT(cl.FirstName, ':>', cl.Mobile)
 		    FROM max_taxi_server_clients cl
 		    WHERE cl.ClientID = 
@@ -182,6 +188,7 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		var tmpClientPhone []byte
 		var tmpName []byte
 		var tmpCarNum []byte
+		var tmpDriverPhone []byte
 
 		err = rows.Scan(
 			&fleet[n].OrderID,
@@ -189,6 +196,7 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 			&status,
 			&tmpCarNum,
 			&tmpName,
+			&tmpDriverPhone,
 			&tmpClientPhone,
 			&tmpClientName,
 		)
@@ -207,6 +215,7 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		fleet[n].ClientPhone = string(tmpClientPhone)
 		fleet[n].ClientName = string(tmpClientName)
 		fleet[n].Name = string(tmpName)
+		fleet[n].DriverPhone = string(tmpDriverPhone)
 		fleet[n].CarNum = string(tmpCarNum)
 		log.Println(fleet[n].Status)
 		log.Println(strconv.Itoa(status))

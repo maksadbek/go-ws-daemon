@@ -16,6 +16,6 @@ func Initialize(DSN string, redisPort int, i18nPath string) (err error) {
 		return err
 	}
 	i18n.MustLoadTranslationFile(i18nPath)
-	T, err = i18n.Tfunc("ru-RU")
+	T, err = i18n.Tfunc("ru-ru")
 	return err
 }

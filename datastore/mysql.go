@@ -3,7 +3,7 @@ package datastore
 import (
 	"database/sql"
 	"strconv"
-
+	"log"
 	"github.com/go-sql-driver/mysql"
 )
 
@@ -14,8 +14,8 @@ type orderLog struct {
 	Name       string
 	CarNum     string
 	StCode     int
-	//	ClientName string
-	//	Mobile     string
+	ClientName string
+	ClientPhone     string
 }
 
 type activeOrder struct {
@@ -130,21 +130,41 @@ func GetAllActiveOrders(fleet int, last int) (Order, error) {
 
 func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 	getALLquery := ` 
-			SELECT 
-				l.order_id as order_id, 
-				l.date_insert as data_insert, 
-				l.status as status, 
-				u.number as carNum,
-				d.driver_name as driverName
-				FROM max_taxi_deamon_log l, max_drivers d, max_units u
-				WHERE u.id = d.unit_id and l.unit_id = u.id and l.` +
-		where.Field +
-		` ` +
-		where.Crit +
-		` ` +
-		where.Value +
-		` ORDER BY l.id DESC 
-				LIMIT 0, ? `
+		SELECT order_id, 
+				date_insert, 
+				status, 
+				carNum, 
+				driverName,
+		        SUBSTRING_INDEX(Name_Mobile, ':>', -1) Mobile,
+		        SUBSTRING_INDEX(Name_Mobile, ':>',  1) FirstName
+		FROM (
+		    SELECT l.order_id, 
+		    		l.date_insert, 
+		    		l.status,
+		    (SELECT u.number 
+		     FROM max_units u 
+		     WHERE u.id = l.unit_id
+		     ) as carNum,
+		    (SELECT d.driver_name 
+		    FROM max_drivers d 
+		    WHERE d.unit_id = l.unit_id
+			LIMIT 1) as driverName,
+		    (SELECT CONCAT(cl.FirstName, ':>', cl.Mobile)
+		    FROM max_taxi_server_clients cl
+		    WHERE cl.ClientID = 
+		    	(SELECT io.client_id 
+				FROM max_taxi_incoming_orders io
+		        WHERE io.client_id = cl.ClientID AND io.id = l.order_id
+		        LIMIT 1)
+		    ) Name_Mobile
+		    FROM max_taxi_deamon_log l
+		    WHERE l.` + where.Field +
+				` ` +
+				where.Crit +
+				` ` +
+				where.Value +
+				` ORDER BY l.id DESC 
+				LIMIT 0, ? ) t`
 
 	rows, err := db.Query(getALLquery, last)
 	fleet := make(Fleet, last)
@@ -158,12 +178,19 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 	for rows.Next() {
 		var status int
 		var insertDate mysql.NullTime
+		var tmpClientName []byte
+		var tmpClientPhone []byte
+		var tmpName []byte
+		var tmpCarNum []byte
+
 		err = rows.Scan(
 			&fleet[n].OrderID,
 			&insertDate,
 			&status,
-			&fleet[n].CarNum,
-			&fleet[n].Name,
+			&tmpCarNum,
+			&tmpName,
+			&tmpClientPhone,
+			&tmpClientName,
 		)
 		if err != nil {
 			return fleet, err
@@ -177,7 +204,12 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 
 		fleet[n].Status = T(strconv.Itoa(status))
 		fleet[n].StCode = status
-
+		fleet[n].ClientPhone = string(tmpClientPhone)
+		fleet[n].ClientName = string(tmpClientName)
+		fleet[n].Name = string(tmpName)
+		fleet[n].CarNum = string(tmpCarNum)
+		log.Println(fleet[n].Status)
+		log.Println(strconv.Itoa(status))
 		n += 1
 	}
 

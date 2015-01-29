@@ -58,6 +58,9 @@ render: function() {
     var StatusIndex = 0
 
     var orderNodes = this.props.data.AllOrders.map(function (order) {
+        //order status option button criterias
+        //if true, then button is hidden
+        //if false, then button is visible
         var statuses= [
         { //0
             "next": true,
@@ -159,6 +162,12 @@ render: function() {
     var BtnState = statuses[order.StCode]
     var AttrOrder = new Object();
     for(var cols in AttrOrders) {
+        // if the length of company name
+        // then => "MyTaxi"
+        // TODO: Implement this in MySQL
+        if(order["Companies"].length > 3){
+            order["Companies"] = "MyTaxi";
+        }
         AttrOrder[AttrOrders[cols]] = order[AttrOrders[cols]];
     } 
     return (

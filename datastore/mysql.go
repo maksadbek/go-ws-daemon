@@ -2,21 +2,20 @@ package datastore
 
 import (
 	"database/sql"
-	"strconv"
-	"log"
 	"github.com/go-sql-driver/mysql"
+	"strconv"
 )
 
 type orderLog struct {
-	OrderID    int
-	InsertDate string
-	Status     string
-	Name       string
-	CarNum     string
-	StCode     int
-	ClientName string
+	OrderID     int
+	InsertDate  string
+	Status      string
+	Name        string
+	CarNum      string
+	StCode      int
+	ClientName  string
 	DriverPhone string
-	ClientPhone     string
+	ClientPhone string
 }
 
 type activeOrder struct {
@@ -165,11 +164,11 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		    ) Name_Mobile
 		    FROM max_taxi_deamon_log l
 		    WHERE l.` + where.Field +
-				` ` +
-				where.Crit +
-				` ` +
-				where.Value +
-				` ORDER BY l.id DESC 
+		` ` +
+		where.Crit +
+		` ` +
+		where.Value +
+		` ORDER BY l.id DESC 
 				LIMIT 0, ? ) t`
 
 	rows, err := db.Query(getALLquery, last)
@@ -217,8 +216,6 @@ func GetAllOrderLogs(where Where, last int) (Fleet, error) {
 		fleet[n].Name = string(tmpName)
 		fleet[n].DriverPhone = string(tmpDriverPhone)
 		fleet[n].CarNum = string(tmpCarNum)
-		log.Println(fleet[n].Status)
-		log.Println(strconv.Itoa(status))
 		n += 1
 	}
 

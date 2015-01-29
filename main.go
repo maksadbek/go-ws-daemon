@@ -39,9 +39,6 @@ func main() {
 	viewsPath := flag.String("views", "views", "views folder")
 	gracefulChild := flag.Bool("graceful", false, "listen on fd open 3")
 	flag.Parse()
-	log.Println(*confPath)
-	log.Println(*viewsPath)
-	log.Println(*gracefulChild)
 	//TCP listener
 	var listener net.Listener
 	//Channels
@@ -49,7 +46,6 @@ func main() {
 	restart := make(chan bool)
 	done := make(chan bool)
 
-	log.Println(*confPath)
 	d, err := ioutil.ReadFile(*confPath)
 	if err != nil {
 		log.Fatal(err)

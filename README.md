@@ -25,11 +25,11 @@ The sample JSON response
 ```JSON
 {
   "id": 1252247,
-  "client_id": 583
+  "client_id": 583,
   "status": "ok",
   "from_address": "41.294003 69.246033",
   "date": "2015-01-13 19:57:15",
-  "time_order": "2015-01-13 20:00:11"
+  "time_order": "2015-01-13 20:00:11",
   "companies": 202,
   "tariffID": 2,
   "client_phone_number": "998000000000",

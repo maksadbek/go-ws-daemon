@@ -1,7 +1,9 @@
 go-ws-daemon
 ============
+This is a Go WebSocket server that updates data on UI when the data changes.
+The UI part is done using ReactJS.
 
-##max_taxi_deamon_log table structure##
+Table structure
 ```
 +------------------------+-------------+------+-----+---------------------+----------------+
 | Field                  | Type        | Null | Key | Default             |Extra           |
@@ -19,21 +21,26 @@ go-ws-daemon
 +------------------------+-------------+------+-----+---------------------+----------------+
 ```
 
+The sample JSON response
+```JSON
+{
+  id: 1252247,
+  client_id: 583"
+  status: "ok",
+  from_adres: "41.294003 69.246033",
+  date: "2015-01-13 19:57:15",
+  time_order: "2015-01-13 20:00:11"
+  companies: 202,
+  tariffID: 2,
+  client_phone_number: "998000000000",
+  client_name: Без номера,
+  car_number: "10 AA 12",
+  driver_phone: "998 90 1234",
+  user_name: "minimal"
+}
 ```
-                 id: 1252247
-          client_id: 583
-             status: NULL
-         from_adres: 41.294003 69.246033
-               date: 2015-01-13 19:57:15
-         time_order: 2015-01-13 20:00:11
-          companies: 202
-           tariffID: 2
-client_phone_number: 998000000000
-        client_name: Без номера
-         car_number: NULL
-       driver_phone: NULL
-          user_name: newmax
-```
+
+To retrieve this data, the following query is runned.
 
 ```SQL
 SELECT
@@ -63,9 +70,13 @@ SELECT
     LIMIT 0,10
 ```
 
-###GET /active-orders?fleet=<FLEET_NUMBER>&hash=<HASH_FROM_PHPSESSID>###
-####returns orders by fleet number####
-###GET /active-orders?hash=<HASH_FROM_PHPSESSID>###
-####returns all orders not filtered by fleet number####
+##API##
+Get all orders filtered by fleet id
+```
+  curl -XGET localhost:9000/active-orders?fleet=<FLEET_NUMBER>&hash=<HASH_FROM_PHPSESSID>
+```
 
-###GET /active-logs?fleet=<FLEET_
+Get all orders
+```Curl
+curl -XGET localhost:9000/active-orders?hash=<HASH_FROM_PHPSESSID>
+```
